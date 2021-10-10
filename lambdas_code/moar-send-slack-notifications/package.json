@@ -1,0 +1,14 @@
+{
+  "name": "moar-send-slack-notifications-authentication",
+  "version": "1.0.0",
+  "description": "Sending some slack notifications",
+  "main": "moar-send-codebuild-notifications-slack.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Fernando Pombeiro",
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "^2.0.0"
+  }
+}

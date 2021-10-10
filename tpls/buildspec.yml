@@ -1,0 +1,31 @@
+version: 0.2
+
+# aws codebuild start-build --project-name moar
+env:
+  variables:
+    NODE_ENV: "production"
+phases:
+  install:
+    runtime-versions:
+      nodejs: 14
+  pre_build:
+    commands:
+        - yarn install --production=false
+  build:
+    commands:
+      - set -e
+      # - yarn global add webpack webpack-cli
+      - echo $CODEBUILD_SRC_DIR 
+      - echo $ENVIRONMENT
+      - echo $CODEBUILD_SOURCE_VERSION
+      # NOW WE BUILD
+      - yarn run build
+  post_build:
+    commands:
+      - exit 0  
+      
+artifacts:
+  files:
+    - "**/*"
+  name: "web-dist-dev"
+  base-directory: dist 

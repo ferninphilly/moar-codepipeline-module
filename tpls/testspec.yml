@@ -1,0 +1,27 @@
+version: 0.2
+
+# aws codebuild start-build --project-name moar
+env:
+  variables:
+    NODE_ENV: "${ENVIRONMENT}"
+phases:
+  install:
+    runtime-versions:
+      nodejs: 12
+    commands:
+      - yarn install
+  pre_build:
+    commands:
+      # - cd deployblocks;
+      # - curl -H "Content-Type:application/json" -X POST -d @startingtests.json ${SLACK_CHANNEL};
+      # - cd ..
+      - yarn run test && exitcode=0 || exitcode=1
+      # - cd deployblocks;
+      # - if [[ $exitcode == 0 ]]; then echo "Tests success"; curl -H "Content-Type:application/json" -X POST -d @testspassed.json ${SLACK_CHANNEL}; else echo "Tests failed"; curl -H "Content-Type:application/json" -X POST -d @testsfailed.json ${SLACK_CHANNEL}; fi
+      - exit $exitcode
+      
+artifacts:
+  files:
+    - "**/*"
+  name: "web-dist-${ENVIRONMENT}"
+  base-directory: build
