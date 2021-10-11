@@ -36,3 +36,8 @@ variable "repository_name" {
     description = "The repository name"
     type = string
 }
+
+variable "sns_error_topic_arn" {
+  description = "The error topic arn that we'll send errors to"
+  type = string
+}

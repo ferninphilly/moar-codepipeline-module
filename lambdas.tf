@@ -13,10 +13,11 @@ module "slack_notify" {
       FAILED_GIF = var.slack_gif["FAILED_GIF"],
       CANCELLED_GIF = var.slack_gif["CANCELLED_GIF"]
   }
-  client      = var.client
-  environment = var.environment
-  region      = var.region
-  account_id  = var.account_id
+  client              = var.client
+  sns_error_topic_arn = var.sns_error_topic_arn
+  environment         = var.environment
+  region              = var.region
+  account_id          = var.account_id
 }
 
 resource "aws_lambda_permission" "cloudwatch_trigger_lambda" {
