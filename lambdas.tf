@@ -8,10 +8,10 @@ module "slack_notify" {
   lambda_function_existing_execute_role    = "arn:aws:iam::${var.account_id}:role/service-role/execute_lambda"
   lambda_function_env_vars = {
       WEBHOOK_URL = var.slack_channel,
-      STARTED_GIF = var.slack_gif["STARTED_GIF"],
-      SUCCEEDED_GIF = var.slack_gif["SUCCEEDED_GIF"],
-      FAILED_GIF = var.slack_gif["FAILED_GIF"],
-      CANCELLED_GIF = var.slack_gif["CANCELLED_GIF"]
+      STARTED_GIF = var.slack_gifs["STARTED_GIF"],
+      SUCCEEDED_GIF = var.slack_gifs["SUCCEEDED_GIF"],
+      FAILED_GIF = var.slack_gifs["FAILED_GIF"],
+      CANCELLED_GIF = var.slack_gifs["CANCELLED_GIF"]
   }
   client              = var.client
   sns_error_topic_arn = var.sns_error_topic_arn
