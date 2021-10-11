@@ -2,7 +2,7 @@ module "slack_notify" {
   source   = "git::https://github.com/ferninphilly/moar-lambda-module.git"
   stack_name                               = "${var.client}-${var.environment}"
   lambda_function_description              = "${var.client} lambda to notify slack on pushes"
-  lambda_binary_name                       = "moar-send-slack-notifications-${var.client}"
+  lambda_binary_name                       = "moar-send-slack-notifications"
   lambda_function_name                     = "moar-send-slack-notifications-${var.client}"
   lambda_function_source_base_path         = "${path.module}/lambdas_code"
   lambda_function_existing_execute_role    = "arn:aws:iam::${var.account_id}:role/service-role/execute_lambda"
