@@ -1,3 +1,13 @@
+
+variable "client" {
+  description="The stack that we're depoloying to"
+  type=string
+}
+
+variable "account_id" {
+  description="Obviously the different account ids"
+  type=string
+}
 variable "environment" {
   description = "The environment we're deploying to. Possible values are dev, uat, prod"
   type = string

@@ -18,3 +18,11 @@ module "slack_notify" {
   region      = var.region
   account_id  = var.account_id
 }
+
+resource "aws_lambda_permission" "cloudwatch_trigger_lambda" {
+  statement_id = "AllowExecutionFromCloudWatch"
+  action = "lambda:InvokeFunction"
+  function_name = module.slack_notify.function_name
+  principal = "events.amazonaws.com"
+  source_arn = aws_cloudwatch_event_rule.codepipeline-notification.arn
+}
