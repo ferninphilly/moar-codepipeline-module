@@ -42,7 +42,3 @@ variable "sns_error_topic_arn" {
   type = string
 }
 
-variable "website_bucket_name" {
-  description = "This is the globally unique name of the s3 bucket that will contain the moar client website"
-  type = string
-}
