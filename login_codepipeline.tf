@@ -20,7 +20,7 @@ resource "aws_codepipeline" "static_web_pipeline" {
   }
 
   artifact_store {
-    location = aws_s3_bucket.artifacts-bucket.id
+    location = var.artifacts_bucket_name
     type     = "S3"
   }
 
