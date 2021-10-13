@@ -42,3 +42,6 @@ variable "sns_error_topic_arn" {
   type = string
 }
 
+variable "website_bucket_name" {
+  type = string
+}

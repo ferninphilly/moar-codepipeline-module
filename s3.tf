@@ -1,7 +1,3 @@
-resource "aws_s3_bucket" "artifacts-bucket" {
-  bucket = "moar-${var.client}-${var.environment}-artifacts"
-}
-
 # AWS S3 bucket for static hosting
 resource "aws_s3_bucket" "moar_website" {
   bucket = var.website_bucket_name
