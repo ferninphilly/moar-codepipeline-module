@@ -34,7 +34,7 @@ resource "aws_codebuild_project" "static_web_build" {
 
   artifacts {
     encryption_disabled    = false
-    name                   = aws_s3_bucket.artifacts-bucket.id
+    name                   = var.artifacts_bucket_name
     override_artifact_name = false
     packaging              = "NONE"
     type                   = "CODEPIPELINE"
@@ -57,7 +57,7 @@ resource "aws_codebuild_project" "static_web_build" {
     s3_logs {
       encryption_disabled = false
       status              = "ENABLED"
-      location            = "${aws_s3_bucket.artifacts-bucket.id}/build-logs/${formatdate("YYYYMMDDhhmm", timestamp())}"
+      location            = "${var.artifacts_bucket_name}/build-logs/${formatdate("YYYYMMDDhhmm", timestamp())}"
     }
   }
 
@@ -82,7 +82,7 @@ resource "aws_codebuild_project" "static_web_test_build" {
 
   artifacts {
     encryption_disabled    = false
-    name                   = aws_s3_bucket.artifacts-bucket.id
+    name                   = var.artifacts_bucket_name
     override_artifact_name = false
     packaging              = "NONE"
     type                   = "CODEPIPELINE"

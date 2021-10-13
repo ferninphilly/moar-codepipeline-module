@@ -45,3 +45,7 @@ variable "sns_error_topic_arn" {
 variable "website_bucket_name" {
   type = string
 }
+
+variable "artifacts_bucket_name" {
+  type = string
+}
