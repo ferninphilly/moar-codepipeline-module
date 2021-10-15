@@ -43,6 +43,7 @@ variable "sns_error_topic_arn" {
 }
 
 variable "website_bucket_name" {
+  description = "The name of the bucket that will keep the website"
   type = string
 }
 

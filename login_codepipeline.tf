@@ -108,7 +108,7 @@ resource "aws_codepipeline" "static_web_pipeline" {
     action {
       category = "Deploy"
       configuration = {
-        "BucketName" = aws_s3_bucket.moar_website.id  
+        "BucketName" = var.website_bucket_name
         "Extract"    = "true"
       }
       input_artifacts = [
