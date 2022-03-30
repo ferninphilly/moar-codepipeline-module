@@ -3,7 +3,8 @@ module "slack_notify" {
   stack_name                               = "${var.client}-${var.environment}"
   lambda_function_description              = "${var.client} lambda to notify slack on pushes"
   lambda_binary_name                       = "moar-send-slack-notifications"
-  lambda_function_name                     = "moar-send-slack-notifications-${var.client}"
+  # This is likely to result in fatal name conflicts, in which case I will revert this commit
+  lambda_function_name                     = "moar-send-slack-notifications"
   lambda_function_source_base_path         = "${path.module}/lambdas_code"
   lambda_function_existing_execute_role    = aws_iam_role.slack_notify_lambda_role.arn
   lambda_function_env_vars = {
