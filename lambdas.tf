@@ -5,7 +5,7 @@ module "slack_notify" {
   lambda_binary_name                       = "moar-send-slack-notifications"
   lambda_function_name                     = "moar-send-slack-notifications-${var.client}"
   lambda_function_source_base_path         = "${path.module}/lambdas_code"
-  lambda_function_existing_execute_role    = "arn:aws:iam::${var.account_id}:role/moar-${var.client}-${var.environment}-lambda-pipeline"
+  lambda_function_existing_execute_role    = aws_iam_role.slack_notify_lambda_role.arn
   lambda_function_env_vars = {
       WEBHOOK_URL = var.slack_channel,
       STARTED_GIF = var.slack_gifs["STARTED_GIF"],
@@ -26,4 +26,46 @@ resource "aws_lambda_permission" "cloudwatch_trigger_lambda" {
   function_name = module.slack_notify.function_name
   principal = "events.amazonaws.com"
   source_arn = aws_cloudwatch_event_rule.codepipeline-notification.arn
+}
+
+resource "aws_iam_role" "slack_notify_lambda_role" {
+    inline_policy {
+        name = "slack_notify_lambda_role_policy"
+        policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "logs:CreateLogGroup",
+            "Resource": "arn:aws:logs:*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": [
+                "arn:aws:logs:*"
+            ]
+        }
+    ]
+}
+EOF
+    }
+    assume_role_policy = <<EOF
+{
+"Version": "2012-10-17",
+"Statement": [
+    {
+    "Effect": "Allow",
+    "Principal": {
+        "Service": "lambda.amazonaws.com"
+    },
+    "Action": "sts:AssumeRole"
+    }
+]
+}
+EOF
 }
