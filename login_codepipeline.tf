@@ -1,5 +1,6 @@
 locals {
   source_vers = {
+    "sandbox": "sandbox",
     "dev": "develop",
     "uat": "uat",
     "prod": "main",
@@ -42,36 +43,36 @@ resource "aws_codepipeline" "static_web_pipeline" {
       }
     }
 }
-#   stage {
-#     name = "Test"
+  stage {
+    name = "Test"
 
-#     action {
-#       category = "Test"
-#       configuration = {
-#         "EnvironmentVariables" = jsonencode(
-#           [
-#             {
-#               name  = "environment"
-#               type  = "PLAINTEXT"
-#               value = var.environment
-#             },
-#           ]
-#         )
-#         "ProjectName" = aws_codebuild_project.static_web_test_build.id
-#       }
-#       input_artifacts = [
-#         "SourceArtifact",
-#       ]
-#       name = "Test"
-#       # output_artifacts = [
-#       #   "TestArtifact",
-#       # ]
-#       owner     = "AWS"
-#       provider  = "CodeBuild"
-#       run_order = 1
-#       version   = "1"
-#     }
-#   }
+    action {
+      category = "Test"
+      configuration = {
+        "EnvironmentVariables" = jsonencode(
+          [
+            {
+              name  = "environment"
+              type  = "PLAINTEXT"
+              value = var.environment
+            },
+          ]
+        )
+        "ProjectName" = aws_codebuild_project.static_web_test_build.id
+      }
+      input_artifacts = [
+        "SourceArtifact",
+      ]
+      name = "Test"
+      # output_artifacts = [
+      #   "TestArtifact",
+      # ]
+      owner     = "AWS"
+      provider  = "CodeBuild"
+      run_order = 1
+      version   = "1"
+    }
+  }
   stage {
     name = "Build"
 
