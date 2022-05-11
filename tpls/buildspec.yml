@@ -21,7 +21,7 @@ phases:
       - echo $CODEBUILD_SOURCE_VERSION
       # - curl -H "Content-Type:application/json" -X POST -d @deployblocks/buildisprogressing.json ${SLACK_CHANNEL}
       # NOW WE BUILD
-      - yarn run build
+      - yarn run build:${ENVIRONMENT}
   post_build:
     commands:
       # - curl -H "Content-Type:application/json" -X POST -d @deployblocks/youdidit.json ${SLACK_CHANNEL}

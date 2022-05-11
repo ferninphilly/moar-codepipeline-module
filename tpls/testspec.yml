@@ -9,13 +9,13 @@ phases:
     runtime-versions:
       nodejs: 12
     commands:
-      - yarn install
+      - echo "This was just a test" #yarn install
   pre_build:
     commands:
       # - cd deployblocks;
       # - curl -H "Content-Type:application/json" -X POST -d @startingtests.json ${SLACK_CHANNEL};
       # - cd ..
-      - yarn run test && exitcode=0 || exitcode=1
+      # - yarn run test && exitcode=0 || exitcode=1
       # - cd deployblocks;
       # - if [[ $exitcode == 0 ]]; then echo "Tests success"; curl -H "Content-Type:application/json" -X POST -d @testspassed.json ${SLACK_CHANNEL}; else echo "Tests failed"; curl -H "Content-Type:application/json" -X POST -d @testsfailed.json ${SLACK_CHANNEL}; fi
       - exit $exitcode
