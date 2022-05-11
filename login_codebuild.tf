@@ -94,6 +94,10 @@ resource "aws_codebuild_project" "static_web_test_build" {
     image_pull_credentials_type = "SERVICE_ROLE"
     privileged_mode             = false
     type                        = "LINUX_CONTAINER"
+    environment_variable {
+      name  = "ENVIRONMENT"
+      value = var.environment
+    }
   }
 
   logs_config {

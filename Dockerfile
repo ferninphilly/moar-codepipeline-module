@@ -6,5 +6,7 @@
 # MOAR!! We're starting a build!") to our moar-X-build slack channels.
 FROM node:15.10-alpine3.13
 
+ENV ENVIRONMENT=develop
+
 RUN apk add curl
 
