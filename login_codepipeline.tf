@@ -82,7 +82,7 @@ resource "aws_codepipeline" "static_web_pipeline" {
         "EnvironmentVariables" = jsonencode(
           [
             {
-              name  = "environment"
+              name  = "ENVIRONMENT"
               type  = "PLAINTEXT"
               value = var.environment
             },
