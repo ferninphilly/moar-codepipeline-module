@@ -11,7 +11,7 @@ phases:
   pre_build:
     commands:
         # - curl -H "Content-Type:application/json" -X POST -d @deployblocks/startitup.json ${SLACK_CHANNEL}
-        - yarn install --production=false
+        - yarn install --production=false --ignore-engines
   build:
     commands:
       - set -e
