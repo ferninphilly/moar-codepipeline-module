@@ -42,11 +42,6 @@ variable "sns_error_topic_arn" {
   type = string
 }
 
-variable "website_bucket_name" {
-  description = "The name of the bucket that will keep the website"
-  type = string
-}
-
 variable "artifacts_bucket_name" {
   type = string
 }
