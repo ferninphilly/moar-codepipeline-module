@@ -30,7 +30,6 @@ resource "aws_codebuild_project" "tester" {
       buildspec = templatefile("${var.buildspec_path}/testspec.yml", {
         STACK        = var.stack
         CURRENT_DATE = formatdate("YYYYMMDDhhmm", timestamp())
-        S3BUCKET     = aws_s3_bucket.plans-bucket.id
         CLIENT       = var.client
       })
       report_build_status = true
