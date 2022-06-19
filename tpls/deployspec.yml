@@ -1,0 +1,21 @@
+version: 0.2
+
+env:
+  shell: bash
+  secrets-manager:
+    NPM_AUTH_TOKEN: "npmjs/publish/authToken"
+phases:
+  install:
+    commands:
+      - sudo yum install jq
+  pre_build:
+    commands:
+      - echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ./.npmrc
+      - export LATEST_VERSION=`yarn --json info @codices-io/moar-sdk | jq '.data."dist-tags".latest' | sed -e 's/"//g'`
+      - echo LATEST VERSION $LATEST_VERSION
+      - cat package.json | jq ".version = \"$LATEST_VERSION\"" > package-new.json
+      - rm package.json && mv package-new.json package.json
+  build:
+    commands:
+#      - yarn install --frozen-lockfile
+      - yarn publish --non-interactive --patch --no-git-tag-version

@@ -4,4 +4,4 @@ version: 0.2
 phases:
   build:
     commands:
-      - yarn run test
+      - yarn run lint

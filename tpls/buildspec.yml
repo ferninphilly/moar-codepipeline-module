@@ -1,34 +1,13 @@
 version: 0.2
 
 # aws codebuild start-build --project-name moar
-env:
-  variables:
-    NODE_ENV: "production"
 phases:
-  install:
-    runtime-versions:
-      nodejs: 14
   pre_build:
     commands:
-        # - curl -H "Content-Type:application/json" -X POST -d @deployblocks/startitup.json ${SLACK_CHANNEL}
-        - yarn install --production=false
+      - yarn install
   build:
     commands:
-      - set -e
-      # - yarn global add webpack webpack-cli
-      - echo $CODEBUILD_SRC_DIR 
-      - echo $ENVIRONMENT
-      - echo $CODEBUILD_SOURCE_VERSION
-      # - curl -H "Content-Type:application/json" -X POST -d @deployblocks/buildisprogressing.json ${SLACK_CHANNEL}
-      # NOW WE BUILD
-      - yarn run build:${ENVIRONMENT}
-  post_build:
-    commands:
-      # - curl -H "Content-Type:application/json" -X POST -d @deployblocks/youdidit.json ${SLACK_CHANNEL}
-      - exit 0  
-      
-artifacts:
+      - yarn run build
+  artifacts:
   files:
     - "**/*"
-  name: "web-dist-dev"
-  base-directory: dist 
