@@ -33,20 +33,6 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
 }
   stage {
     name = "Validate"
-
-    action {
-      name             = "ValidateTypescriptPackage"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
-      version          = "1"
-      run_order        = 1
-      input_artifacts  = ["SourceArtifact"]
-
-      configuration = {
-        ProjectName          = aws_codebuild_project.validator.name
-      }
-    }
     action {
       name             = "LintTypescript"
       category         = "Build"
