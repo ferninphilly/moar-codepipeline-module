@@ -2,12 +2,9 @@ version: 0.2
 
 # aws codebuild start-build --project-name moar
 phases:
-  pre_build:
-    commands:
-      - yarn install
   build:
     commands:
       - yarn run build
-  artifacts:
+artifacts:
   files:
     - "**/*"
