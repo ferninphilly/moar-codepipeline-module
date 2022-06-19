@@ -21,7 +21,7 @@ resource "aws_codebuild_project" "linter" {
     source {
       type     = "CODEPIPELINE"
       location = "https://github.com/${var.repository_owner}/${var.repository_name}.git"
-      buildspec = templatefile("${var.buildspec_path}/lintspec.yml", {
+      buildspec = templatefile("${path.module}/tpls/lintspec.yml", {
         CURRENT_DATE = formatdate("YYYYMMDDhhmm", timestamp())
         CLIENT       = var.client
       })
