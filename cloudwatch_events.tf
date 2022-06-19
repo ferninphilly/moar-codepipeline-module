@@ -10,11 +10,11 @@ event_pattern = <<PATTERN
     "CodePipeline Pipeline Execution State Change"
   ],
   "resources": [
-    "${aws_codepipeline.static_web_pipeline.arn}"
+    "${aws_codepipeline.moar-typescript-codepipeline.arn}"
   ],
   "detail": {
     "pipeline": [
-      "${aws_codepipeline.static_web_pipeline.name}"
+      "${aws_codepipeline.moar-typescript-codepipeline.name}"
     ],
     "state": [
       "RESUMED",
