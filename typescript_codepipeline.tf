@@ -27,7 +27,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
       configuration = {
         ConnectionArn    = aws_codestarconnections_connection.pipeline_connection.arn
         FullRepositoryId = "${var.repository_owner}/${var.repository_name}"
-        BranchName       = var.gitenv
+        BranchName       = var.environment
       }
     }
 }
