@@ -30,13 +30,16 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
         BranchName       = var.environment
       }
     }
+}
+  stage {
+    name = "Install"
     action {
       name             = "Install"
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
       version          = "1"
-      run_order        = 2
+      run_order        = 1
       input_artifacts  = ["SourceArtifact"]
       output_artifacts = ["InstallArtifact"]
       configuration = {
