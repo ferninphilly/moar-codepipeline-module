@@ -43,7 +43,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
       input_artifacts  = ["SourceArtifact"]
       output_artifacts = ["InstallArtifact"]
       configuration = {
-        ProjectName          = aws_codebuild_project.linter.name
+        ProjectName          = aws_codebuild_project.installer.name
       }
     }
 }
