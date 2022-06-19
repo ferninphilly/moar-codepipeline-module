@@ -16,19 +16,13 @@ resource "aws_codebuild_project" "deploy" {
       image                       = aws_ecr_repository.yarn-image-repo.repository_url
       image_pull_credentials_type = "SERVICE_ROLE"
       privileged_mode             = false
-
-      environment_variable {
-        name  = "TF_ACTION"
-        value = "plan"
-        type  = "PLAINTEXT"
-      }
     }
 
     source {
       type     = "GITHUB"
       location = "https://github.com/${var.repository_owner}/${var.repository_name}.git"
       buildspec = templatefile("${path.module}/tpls/deployspec.yml", {
-        CURRENT_DATE = formatdate("YYYYMMDDhhmm", timestamp())
+        ENVIRONMENT  = var.environment
         CLIENT       = var.client
       })
       report_build_status = true
