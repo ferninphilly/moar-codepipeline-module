@@ -30,6 +30,19 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
         BranchName       = var.environment
       }
     }
+    action {
+      name             = "Install"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      run_order        = 2
+      input_artifacts  = ["SourceArtifact"]
+      output_artifacts = ["InstallArtifact"]
+      configuration = {
+        ProjectName          = aws_codebuild_project.linter.name
+      }
+    }
 }
   stage {
     name = "Validate"
@@ -40,7 +53,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["SourceArtifact"]
+      input_artifacts  = ["InstallArtifact"]
 
       configuration = {
         ProjectName          = aws_codebuild_project.linter.name
@@ -53,7 +66,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["SourceArtifact"]
+      input_artifacts  = ["InstallArtifact"]
       output_artifacts = [ "TypescriptBuildArtifact"]
 
       configuration = {
@@ -67,7 +80,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["SourceArtifact"]
+      input_artifacts  = ["InstallArtifact"]
       configuration = {
         ProjectName          = aws_codebuild_project.tester.name
       }
