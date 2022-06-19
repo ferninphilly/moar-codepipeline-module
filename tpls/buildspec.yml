@@ -4,6 +4,7 @@ version: 0.2
 phases:
   build:
     commands:
+      - ls
       - yarn run build
 artifacts:
   files:
