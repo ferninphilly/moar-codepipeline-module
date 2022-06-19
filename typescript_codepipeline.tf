@@ -34,7 +34,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
   stage {
     name = "Validate"
     action {
-      name             = "LintTypescript"
+      name             = "Lint"
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
@@ -47,7 +47,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
       }
     }
     action {
-      name             = "TypeScriptBuild"
+      name             = "Build"
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
@@ -61,7 +61,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
       }
     }
     action {
-      name             = "TypeScriptTest"
+      name             = "Test"
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
