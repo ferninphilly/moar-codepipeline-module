@@ -41,7 +41,3 @@ variable "sns_error_topic_arn" {
   description = "The error topic arn that we'll send errors to"
   type = string
 }
-
-variable "artifacts_bucket_name" {
-  type = string
-}
