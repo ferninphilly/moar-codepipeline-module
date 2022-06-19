@@ -102,7 +102,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
       output_artifacts = []
 
       configuration = {
-        ProjectName          = aws_codebuild_project.apply-step.name
+        ProjectName          = aws_codebuild_project.deploy.name
         PrimarySource        = "TypescriptBuildArtifact"
       }
     }
