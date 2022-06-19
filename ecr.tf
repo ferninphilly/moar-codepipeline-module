@@ -1,13 +1,13 @@
 /* create ECR repo for this branch */
 
-resource "aws_ecr_repository" "base_image" {
-  name = "moar-${var.client}-client-${var.environment}-base-image"
+resource "aws_ecr_repository" "yarn-image-repo" {
+  name = "moar-${var.client}-client-${var.environment}-yarn-image"
   image_tag_mutability = "IMMUTABLE"
 }
 
 /* expire all but 10 latest images */
-resource "aws_ecr_lifecycle_policy" "base_expire_old_imgs" {
-  repository = aws_ecr_repository.base_image.name
+resource "aws_ecr_lifecycle_policy" "yarn_expire_old_imgs" {
+  repository = aws_ecr_repository.yarn-image-repo.name
   policy     = <<EOF
 {
     "rules": [
@@ -29,7 +29,7 @@ EOF
 }
 
 resource "aws_ecr_repository_policy" "allow_codebuild" {
-  repository = aws_ecr_repository.base_image.name
+  repository = aws_ecr_repository.yarn-image-repo.name
 
   policy = <<EOF
 {
