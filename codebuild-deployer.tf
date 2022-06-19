@@ -27,7 +27,7 @@ resource "aws_codebuild_project" "deploy" {
     source {
       type     = "GITHUB"
       location = "https://github.com/${var.repository_owner}/${var.repository_name}.git"
-      buildspec = templatefile("${var.buildspec_path}/deployspec.yml", {
+      buildspec = templatefile("../tpls/deployspec.yml", {
         CURRENT_DATE = formatdate("YYYYMMDDhhmm", timestamp())
         CLIENT       = var.client
       })
