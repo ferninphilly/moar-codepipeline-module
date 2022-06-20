@@ -40,7 +40,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["InstallArtifact"]
+      input_artifacts  = ["SourceArtifact"]
 
       configuration = {
         ProjectName          = aws_codebuild_project.linter.name
@@ -53,7 +53,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["InstallArtifact"]
+      input_artifacts  = ["SourceArtifact"]
       output_artifacts = [ "TypescriptBuildArtifact"]
 
       configuration = {
@@ -67,7 +67,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["InstallArtifact"]
+      input_artifacts  = ["SourceArtifact"]
       configuration = {
         ProjectName          = aws_codebuild_project.tester.name
       }
