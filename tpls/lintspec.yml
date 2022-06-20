@@ -4,5 +4,5 @@ version: 0.2
 phases:
   build:
     commands:
-      - ls
+      - ls ./node_modules
       - yarn run lint
