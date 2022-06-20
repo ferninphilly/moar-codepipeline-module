@@ -9,4 +9,4 @@ phases:
   build:
     commands:
       - ls
-      - eslint ./src --quiet --ext .ts
+      - yarn run lint:fix
