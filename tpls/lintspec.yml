@@ -4,5 +4,5 @@ version: 0.2
 phases:
   build:
     commands:
-      - ls ./node_modules
-      - yarn run lint
+      - ls
+      - eslint ./src --quiet --ext .ts
