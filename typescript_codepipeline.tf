@@ -32,22 +32,6 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
     }
 }
   stage {
-    name = "Install"
-    action {
-      name             = "Install"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
-      version          = "1"
-      run_order        = 1
-      input_artifacts  = ["SourceArtifact"]
-      output_artifacts = ["InstallArtifact"]
-      configuration = {
-        ProjectName          = aws_codebuild_project.installer.name
-      }
-    }
-}
-  stage {
     name = "Validate"
     action {
       name             = "Lint"
