@@ -5,7 +5,8 @@ phases:
   install:
     on-failure: ABORT
     commands:
-      - yarn install
+      - yarn install --frozen-lockfile
 artifacts:
   files:
     - "**/*"
+  enable-symlinks: yes
