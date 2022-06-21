@@ -36,7 +36,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
 
     action {
       name             = "Install"
-      category         = "Install"
+      category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
       version          = "1"
@@ -53,7 +53,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
     name = "Validate"
     action {
       name             = "ValidateTypes"
-      category         = "Build"
+      category         = "Test"
       owner            = "AWS"
       provider         = "CodeBuild"
       version          = "1"
@@ -66,7 +66,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
     }
     action {
       name             = "Lint"
-      category         = "Build"
+      category         = "Test"
       owner            = "AWS"
       provider         = "CodeBuild"
       version          = "1"
@@ -93,7 +93,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
     }
     action {
       name             = "Test"
-      category         = "Build"
+      category         = "Test"
       owner            = "AWS"
       provider         = "CodeBuild"
       version          = "1"
