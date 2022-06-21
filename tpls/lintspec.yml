@@ -2,6 +2,10 @@ version: 0.2
 
 # aws codebuild start-build --project-name moar
 phases:
+  install:
+    commands:
+      # should do nothing as we've already installed
+      - yarn install --frozen-lockfile
   build:
     commands:
       - yarn lint:fix
