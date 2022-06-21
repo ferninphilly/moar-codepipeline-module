@@ -30,7 +30,25 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
         BranchName       = var.environment
       }
     }
-}
+  }
+  stage {
+    name = "Install"
+
+    action {
+      name             = "Install"
+      category         = "Install"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      run_order        = 1
+      input_artifacts  = ["SourceArtifact"]
+      output_artifacts = ["InstalledSourceArtefact"]
+
+      configuration = {
+        ProjectName          = aws_codebuild_project.installer.name
+      }
+    }
+  }
   stage {
     name = "Validate"
     action {
@@ -40,7 +58,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["SourceArtifact"]
+      input_artifacts  = ["InstalledSourceArtefact"]
 
       configuration = {
         ProjectName          = aws_codebuild_project.typesvalidator.name
@@ -53,7 +71,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["SourceArtifact"]
+      input_artifacts  = ["InstalledSourceArtefact"]
 
       configuration = {
         ProjectName          = aws_codebuild_project.linter.name
@@ -66,8 +84,8 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["SourceArtifact"]
-      output_artifacts = [ "TypescriptBuildArtifact"]
+      input_artifacts  = ["InstalledSourceArtefact"]
+      output_artifacts = ["TypescriptBuildArtifact"]
 
       configuration = {
         ProjectName          = aws_codebuild_project.builder.name
@@ -80,7 +98,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["SourceArtifact"]
+      input_artifacts  = ["InstalledSourceArtefact"]
       configuration = {
         ProjectName          = aws_codebuild_project.tester.name
       }

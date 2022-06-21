@@ -2,10 +2,6 @@ version: 0.2
 
 # aws codebuild start-build --project-name moar
 phases:
-  install:
-    on-failure: ABORT
-    commands:
-      - yarn install
   build:
     commands:
-      - yarn run test
+      - yarn test

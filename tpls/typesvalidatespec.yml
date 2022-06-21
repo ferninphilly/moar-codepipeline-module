@@ -4,6 +4,4 @@ version: 0.2
 phases:
   build:
     commands:
-      - yarn --version
-      - yarn install
       - yarn types:validate
