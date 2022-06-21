@@ -2,6 +2,9 @@ version: 0.2
 
 # aws codebuild start-build --project-name moar
 phases:
+  install:
+    commands:
+      - yarn install --frozen-lockfile --offline --check-files --cache-folder ./cache
   build:
     commands:
       - yarn test

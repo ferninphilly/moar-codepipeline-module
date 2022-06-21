@@ -4,8 +4,7 @@ version: 0.2
 phases:
   install:
     commands:
-      # should do nothing as we've already installed
-      - yarn install --frozen-lockfile
+      - yarn install --frozen-lockfile --offline --check-files --cache-folder ./cache
   build:
     commands:
       - yarn lint:fix

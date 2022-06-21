@@ -5,7 +5,7 @@ phases:
   install:
     on-failure: ABORT
     commands:
-      - yarn install --frozen-lockfile
+      - yarn install --frozen-lockfile --cache-folder ./cache
 artifacts:
   files:
     - "**/*"
