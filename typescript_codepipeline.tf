@@ -34,7 +34,7 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
   stage {
     name = "Validate"
     action {
-      name             = "Validate Types"
+      name             = "ValidateTypes"
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
