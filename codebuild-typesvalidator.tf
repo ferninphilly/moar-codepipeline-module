@@ -21,7 +21,7 @@ resource "aws_codebuild_project" "typesvalidator" {
     source {
       type     = "CODEPIPELINE"
       location = "https://github.com/${var.repository_owner}/${var.repository_name}.git"
-      buildspec = templatefile("${path.module}/tpls/validatetypespec.yml", {
+      buildspec = templatefile("${path.module}/tpls/typesvalidatespec.yml", {
         CURRENT_DATE = formatdate("YYYYMMDDhhmm", timestamp())
         CLIENT       = var.client
       })
