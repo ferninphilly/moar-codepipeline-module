@@ -1,0 +1,9 @@
+version: 0.2
+
+# aws codebuild start-build --project-name moar
+phases:
+  build:
+    commands:
+      - yarn --version
+      - yarn install
+      - yarn types:validate
