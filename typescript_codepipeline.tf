@@ -30,17 +30,48 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
         BranchName       = var.environment
       }
     }
-}
+  }
   stage {
-    name = "Validate"
+    name = "Install"
+
     action {
-      name             = "Lint"
+      name             = "Install"
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
       input_artifacts  = ["SourceArtifact"]
+      output_artifacts = ["InstalledSourceArtefact"]
+
+      configuration = {
+        ProjectName          = aws_codebuild_project.installer.name
+      }
+    }
+  }
+  stage {
+    name = "Validate"
+    action {
+      name             = "ValidateTypes"
+      category         = "Test"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      run_order        = 1
+      input_artifacts  = ["InstalledSourceArtefact"]
+
+      configuration = {
+        ProjectName          = aws_codebuild_project.typesvalidator.name
+      }
+    }
+    action {
+      name             = "Lint"
+      category         = "Test"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      run_order        = 1
+      input_artifacts  = ["InstalledSourceArtefact"]
 
       configuration = {
         ProjectName          = aws_codebuild_project.linter.name
@@ -53,8 +84,8 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["SourceArtifact"]
-      output_artifacts = [ "TypescriptBuildArtifact"]
+      input_artifacts  = ["InstalledSourceArtefact"]
+      output_artifacts = ["TypescriptBuildArtifact"]
 
       configuration = {
         ProjectName          = aws_codebuild_project.builder.name
@@ -62,12 +93,12 @@ resource "aws_codepipeline" "moar-typescript-codepipeline" {
     }
     action {
       name             = "Test"
-      category         = "Build"
+      category         = "Test"
       owner            = "AWS"
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["SourceArtifact"]
+      input_artifacts  = ["InstalledSourceArtefact"]
       configuration = {
         ProjectName          = aws_codebuild_project.tester.name
       }

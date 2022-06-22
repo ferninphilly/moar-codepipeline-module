@@ -1,0 +1,12 @@
+version: 0.2
+
+# aws codebuild start-build --project-name moar
+phases:
+  install:
+    on-failure: ABORT
+    commands:
+      - yarn install --frozen-lockfile --cache-folder ./cache
+artifacts:
+  files:
+    - "**/*"
+  enable-symlinks: yes

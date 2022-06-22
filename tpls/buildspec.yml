@@ -3,9 +3,8 @@ version: 0.2
 # aws codebuild start-build --project-name moar
 phases:
   install:
-    on-failure: ABORT
     commands:
-      - yarn install
+      - yarn install --frozen-lockfile --offline --check-files --cache-folder ./cache
   build:
     commands:
       - ls
@@ -13,5 +12,5 @@ phases:
 artifacts:
   files:
     - "**/*"
-  exclude-paths: 
+  exclude-paths:
     - ./**/infrastructure
