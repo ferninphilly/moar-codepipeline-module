@@ -8,12 +8,17 @@ phases:
   pre_build:
     commands:
       - echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ./.npmrc
-      - export LATEST_VERSION=`yarn --json info @codices-io/moar-${CLIENT}:${ENVIRONMENT} | jq '.data."dist-tags".latest' | sed -e 's/"//g'`
-      - echo LATEST VERSION $LATEST_VERSION
-      - cat package.json | jq ".version = \"$LATEST_VERSION\"" > package-new.json
+      - export LATEST_VERSION=`yarn --json info @codices-io/moar-${CLIENT} | jq '.data."dist-tags".latest' | sed -e 's/"//g'`
+      - export NEXT_VERSION=$(echo ${LATEST_VERSION} | awk -F. -v OFS=. '{$NF += 1 ; print}')
+      - cat package.json | jq ".version = \"$NEXT_VERSION\"" > package-new.json
       - rm package.json && mv package-new.json package.json
   build:
     commands:
-      #- rm -rf node_modules
-      #- yarn install --frozen-lockfile
+      - rm -rf node_modules
+      - yarn install --frozen-lockfile
       - yarn publish --non-interactive --patch --no-git-tag-version
+  post_build:
+    commands:
+      - git add .
+      - git commit -m "Updated version from codepipeline"
+      - git push origin ${ENVIRONMENT}
