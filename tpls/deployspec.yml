@@ -16,9 +16,3 @@ phases:
       - rm -rf node_modules
       - yarn install --frozen-lockfile
       - yarn publish --non-interactive --patch --no-git-tag-version
-  post_build:
-    commands:
-      - rm -rf node_modules
-      - git add .
-      - git commit -m "Updated version from codepipeline"
-      - git push origin ${ENVIRONMENT}
