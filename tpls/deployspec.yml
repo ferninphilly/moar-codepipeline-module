@@ -8,7 +8,10 @@ phases:
   pre_build:
     commands:
       - echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ./.npmrc
-      - yarn version patch --new-version patch
+      - export LATEST_VERSION=`yarn --json info @codices-io/moar-${CLIENT} | jq '.data."dist-tags".latest' | sed -e 's/"//g'`
+      - export NEXT_VERSION=$(echo ${LATEST_VERSION} | awk -F. -v OFS=. '{$NF += 1 ; print}')
+      - cat package.json | jq ".version = \"$NEXT_VERSION\"" > package-new.json
+      - rm package.json && mv package-new.json package.json
   build:
     commands:
       - rm -rf node_modules
