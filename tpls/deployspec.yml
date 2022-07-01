@@ -13,6 +13,4 @@ phases:
       - rm package.json && mv package-new.json package.json
   build:
     commands:
-      - rm -rf node_modules
-      - yarn install --frozen-lockfile
       - yarn publish --non-interactive --patch --no-git-tag-version
