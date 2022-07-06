@@ -27,7 +27,7 @@ resource "aws_codebuild_project" "planner" {
   source {
     type     = "CODEPIPELINE"
     location = "https://github.com/ferninphilly/moar-platform-infrastructure.git"
-    buildspec = templatefile("${var.buildspec_path}/planspec.yml", {
+    buildspec = templatefile("${path.module}/tpls/planspec.yml", {
       TF_DIR       = local.tf_dir
       CURRENT_DATE = formatdate("YYYYMMDDhhmm", timestamp())
       S3BUCKET     = aws_s3_bucket.plans-bucket.id

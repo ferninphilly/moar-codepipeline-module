@@ -20,7 +20,7 @@ resource "aws_codebuild_project" "tfvalidator" {
 
   source {
     type = "CODEPIPELINE"
-    buildspec = templatefile("${var.buildspec_path}/validate-terraform-spec.yml", {
+    buildspec = templatefile("${path.module}/tpls/validate-terraform-spec.yml", {
       TF_DIR       = local.tf_dir
       CURRENT_DATE = formatdate("YYYYMMDDhhmm", timestamp())
       S3BUCKET     = aws_s3_bucket.plans-bucket.id
