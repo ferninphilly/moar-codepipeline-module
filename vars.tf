@@ -41,8 +41,9 @@ variable "repository_name" {
 }
 
 variable "sns_error_topic_arn" {
-  description = "The error topic arn that we'll send errors to"
+  description = "The error topic arn that we'll send errors to. Defaults to moar-<environment>-sns-error-topic."
   type        = string
+  default     = ""
 }
 
 variable "has_autogen_types" {

@@ -3,17 +3,6 @@ resource "aws_codestarconnections_connection" "pipeline_connection" {
   provider_type = "GitHub"
 }
 
-
-data "aws_secretsmanager_secret_version" "config" {
-  secret_id = "deployment/config"
-}
-locals {
-  tf_dir              = "infrastructure/${var.environment}"
-  config_data         = jsondecode(data.aws_secretsmanager_secret_version.config.secret_string)
-  github_secret_token = local.config_data["git_token"]
-  slack_channel       = local.config_data["slack_channel"]
-}
-
 resource "aws_codepipeline" "moar-codepipeline" {
   name     = "meta-${var.client}-${var.environment}-codepipeline"
   role_arn = aws_iam_role.codepipeline_role.arn
