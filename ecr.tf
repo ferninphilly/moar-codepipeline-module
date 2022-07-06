@@ -62,12 +62,12 @@ EOF
 }
 
 resource "aws_ecr_repository" "terragrunt-image-repo" {
-  name = "meta-${var.stack_client}-${var.environment}-terragrunt-base-image"
+  name = "meta-${var.client}-${var.environment}-terragrunt-base-image"
 }
 
 /* expire all but 10 latest images */
 resource "aws_ecr_lifecycle_policy" "terragrunt_expire_old_imgs" {
-  repository = "meta-${var.stack_client}-${var.environment}-terragrunt-base-image"
+  repository = "meta-${var.client}-${var.environment}-terragrunt-base-image"
   depends_on = [
     aws_ecr_repository.terragrunt-image-repo,
     aws_ecr_repository.yarn-image-repo

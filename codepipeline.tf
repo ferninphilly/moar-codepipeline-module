@@ -154,7 +154,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
       version   = "1"
       run_order = 1
       configuration = {
-        CustomData = "Check your email to see plan for ${var.stack_client}-${var.environment} and decide whether to approve"
+        CustomData = "Check your email to see plan for ${var.client}-${var.environment} and decide whether to approve"
         //"NotificationArn" = aws_sns_topic.terragrunt-plan-topic.arn
       }
     }

@@ -1,5 +1,5 @@
 resource "aws_codebuild_project" "apply-step" {
-  name           = "meta-${var.stack_client}-${var.environment}-apply-step"
+  name           = "meta-${var.client}-${var.environment}-apply-step"
   description    = "TF apply-step for meta pipeline"
   build_timeout  = "29"
   queued_timeout = "30"
