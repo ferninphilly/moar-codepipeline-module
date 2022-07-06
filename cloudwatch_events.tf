@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_event_rule" "codepipeline-notification" {
-  name = "moar-${var.client}-${var.environment}-pipeline-event-rule"
-  description = "Cloudwatch event to notify us on Codepipeline state changes"
-event_pattern = <<PATTERN
+  name          = "moar-${var.client}-${var.environment}-pipeline-event-rule"
+  description   = "Cloudwatch event to notify us on Codepipeline state changes"
+  event_pattern = <<PATTERN
 {
   "source": [
     "aws.codepipeline"
@@ -10,11 +10,11 @@ event_pattern = <<PATTERN
     "CodePipeline Pipeline Execution State Change"
   ],
   "resources": [
-    "${aws_codepipeline.moar-typescript-codepipeline.arn}"
+    "${aws_codepipeline.moar-codepipeline.arn}"
   ],
   "detail": {
     "pipeline": [
-      "${aws_codepipeline.moar-typescript-codepipeline.name}"
+      "${aws_codepipeline.moar-codepipeline.name}"
     ],
     "state": [
       "RESUMED",
@@ -42,8 +42,8 @@ resource "aws_cloudwatch_event_target" "codepipeline-event-target" {
 }
   DOC
     input_paths = {
-      pipeline: "$.detail.pipeline",
-      state: "$.detail.state"
+      pipeline : "$.detail.pipeline",
+      state : "$.detail.state"
     }
   }
 }

@@ -20,7 +20,7 @@ resource "aws_codebuild_project" "deploy" {
 
   source {
     type = "CODEPIPELINE"
-    buildspec = templatefile("${path.module}/tpls/deployspec.yml", {
+    buildspec = templatefile("${path.module}/tpls/publishspec.yml", {
       ENVIRONMENT = var.environment
       CLIENT      = var.client
     })
