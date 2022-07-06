@@ -1,0 +1,14 @@
+version: 0.2
+
+# aws codebuild start-build --project-name moar
+phases:
+  pre_build:
+    commands:
+      - cd ${TF_DIR}
+  build:
+    commands:
+      - yes | terragrunt init
+      - terragrunt hclfmt
+      - terragrunt validate-inputs
+      - terragrunt validate -json
+      - exit $?

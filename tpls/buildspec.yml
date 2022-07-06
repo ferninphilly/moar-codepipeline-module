@@ -7,7 +7,6 @@ phases:
       - yarn install --frozen-lockfile --offline --check-files --cache-folder ./cache
   build:
     commands:
-      - ls
       - yarn run build
 artifacts:
   files:

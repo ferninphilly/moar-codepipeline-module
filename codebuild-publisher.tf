@@ -1,13 +1,13 @@
-resource "aws_codebuild_project" "linter" {
-  name           = "moar-${var.client}-linter-build"
-  description    = "TF linter for meta pipeline"
+resource "aws_codebuild_project" "deploy" {
+  name           = "moar-${var.client}-deployer-build"
+  description    = "Typescript deployer for moar pipeline"
   build_timeout  = "29"
   queued_timeout = "30"
 
   service_role = aws_iam_role.codebuild_role.arn
 
   artifacts {
-    type = "CODEPIPELINE"
+    type = "NO_ARTIFACTS"
   }
 
   environment {
@@ -20,9 +20,9 @@ resource "aws_codebuild_project" "linter" {
 
   source {
     type = "CODEPIPELINE"
-    buildspec = templatefile("${path.module}/tpls/lintspec.yml", {
-      CURRENT_DATE = formatdate("YYYYMMDDhhmm", timestamp())
-      CLIENT       = var.client
+    buildspec = templatefile("${path.module}/tpls/deployspec.yml", {
+      ENVIRONMENT = var.environment
+      CLIENT      = var.client
     })
     report_build_status = true
   }

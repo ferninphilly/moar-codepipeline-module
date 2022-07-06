@@ -1,6 +1,6 @@
-resource "aws_codebuild_project" "linter" {
-  name           = "moar-${var.client}-linter-build"
-  description    = "TF linter for meta pipeline"
+resource "aws_codebuild_project" "typesvalidator" {
+  name           = "moar-${var.client}-typesvalidate-build"
+  description    = "TF types validation for meta pipeline"
   build_timeout  = "29"
   queued_timeout = "30"
 
@@ -20,7 +20,7 @@ resource "aws_codebuild_project" "linter" {
 
   source {
     type = "CODEPIPELINE"
-    buildspec = templatefile("${path.module}/tpls/lintspec.yml", {
+    buildspec = templatefile("${path.module}/tpls/types-validate-spec.yml", {
       CURRENT_DATE = formatdate("YYYYMMDDhhmm", timestamp())
       CLIENT       = var.client
     })

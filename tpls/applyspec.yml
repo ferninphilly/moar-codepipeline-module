@@ -1,0 +1,14 @@
+version: 0.2
+
+# aws codebuild start-build --project-name moar
+phases:
+  pre_build:
+    commands:
+      - cd ${TF_DIR}
+  build:
+    commands:
+      - terragrunt apply --terragrunt-log-level debug tf_plan.tfplan >> applied_plan.txt
+  post_build:
+    commands:
+      - aws s3 cp applied_plan.txt s3://${S3BUCKET}/reviewPlans/appliedPlans/tf_${CLIENT}_${CURRENT_DATE}.txt
+      - exit 0

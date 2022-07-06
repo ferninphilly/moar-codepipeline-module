@@ -1,0 +1,21 @@
+version: 0.2
+
+# aws codebuild start-build --project-name moar
+phases:
+  pre_build:
+    commands:
+      - cd ${TF_DIR}
+      - terragrunt init -upgrade
+  build:
+    commands:
+      - terragrunt plan --terragrunt-log-level debug -no-color -out tf_plan.tfplan >> diff_plan.txt
+      - echo $(terragrunt show -json tf_plan.tfplan) >> tf_${CLIENT}_${CURRENT_DATE}.json
+  post_build:
+    commands:
+      - aws s3 cp tf_${CLIENT}_${CURRENT_DATE}.json s3://${S3BUCKET}/plans/tf_${CLIENT}_${CURRENT_DATE}.json
+      - aws s3 cp diff_plan.txt s3://${S3BUCKET}/reviewPlans/tf_${CLIENT}_${CURRENT_DATE}.txt
+      - exit 0
+
+artifacts:
+  files:
+    - "**/*"
