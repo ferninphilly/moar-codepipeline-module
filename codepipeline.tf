@@ -20,7 +20,6 @@ resource "aws_codepipeline" "moar-codepipeline" {
       category         = "Source"
       owner            = "AWS"
       provider         = "CodeStarSourceConnection"
-      run_order        = 1
       version          = "1"
       output_artifacts = ["SourceArtifact"]
 
@@ -41,7 +40,6 @@ resource "aws_codepipeline" "moar-codepipeline" {
       owner            = "AWS"
       provider         = "CodeBuild"
       version          = "1"
-      run_order        = 1
       input_artifacts  = ["SourceArtifact"]
       output_artifacts = ["InstalledSourceArtefact"]
 
@@ -56,13 +54,13 @@ resource "aws_codepipeline" "moar-codepipeline" {
       name            = "ValidateTypes"
       category        = "Test"
       owner           = "AWS"
-      provider        = "CodeBuild"
+      provider        = var.has_autogen_types ? "CodeBuild" : "Lambda"
       version         = "1"
-      run_order       = var.has_autogen_types ? 1 : -1
-      input_artifacts = ["InstalledSourceArtefact"]
+      input_artifacts = var.has_autogen_types ? ["InstalledSourceArtefact"] : []
 
       configuration = {
-        ProjectName = aws_codebuild_project.typesvalidator.name
+        ProjectName  = aws_codebuild_project.typesvalidator.name
+        FunctionName = aws_lambda_function.null_lambda.name
       }
     }
     action {
