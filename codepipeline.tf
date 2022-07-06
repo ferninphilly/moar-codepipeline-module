@@ -3,6 +3,7 @@ resource "aws_codestarconnections_connection" "pipeline_connection" {
   provider_type = "GitHub"
 }
 
+/* This defines the maximal code pipeline */
 resource "aws_codepipeline" "moar-codepipeline" {
   name     = "meta-${var.client}-${var.environment}-codepipeline"
   role_arn = aws_iam_role.codepipeline_role.arn
@@ -52,13 +53,12 @@ resource "aws_codepipeline" "moar-codepipeline" {
   stage {
     name = "Validate"
     action {
-      for_each        = var.has_autogen_types ? { "yes" = "yes" } : {}
       name            = "ValidateTypes"
       category        = "Test"
       owner           = "AWS"
       provider        = "CodeBuild"
       version         = "1"
-      run_order       = 1
+      run_order       = var.has_autogen_types ? 1 : -1
       input_artifacts = ["InstalledSourceArtefact"]
 
       configuration = {
@@ -123,8 +123,8 @@ resource "aws_codepipeline" "moar-codepipeline" {
     }
   }
   stage {
-    name  = "Plan"
-    count = var.has_infrastructure ? 1 : 0
+    name = "Plan"
+    //count = var.has_infrastructure ? 1 : 0
 
     action {
       name             = "TerraformPlan"
@@ -144,8 +144,8 @@ resource "aws_codepipeline" "moar-codepipeline" {
   }
 
   stage {
-    name  = "Gate" # TODO: SNS
-    count = var.has_infrastructure ? 1 : 0
+    name = "Gate" # TODO: SNS
+    //count = var.has_infrastructure ? 1 : 0
 
     action {
       name      = "TerraformPlanApproval"
