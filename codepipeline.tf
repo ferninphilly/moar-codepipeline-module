@@ -33,6 +33,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
   stage {
     name = "Install"
 
+    /* It's safe to install every time, as it looks for package.json files and only runs installs when it finds them */
     action {
       name             = "Install"
       category         = "Build"
@@ -51,7 +52,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
   stage {
     name = "Validate"
     action {
-      count           = var.has_autogen_types ? 1 : 0
+      for_each        = var.has_autogen_types ? { "yes" = "yes" } : {}
       name            = "ValidateTypes"
       category        = "Test"
       owner           = "AWS"
@@ -65,7 +66,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
       }
     }
     action {
-      count           = var.has_typescript ? 1 : 0
+      //count           = var.has_typescript ? 1 : 0
       name            = "Lint"
       category        = "Test"
       owner           = "AWS"
@@ -79,7 +80,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
       }
     }
     action {
-      count           = var.has_infrastructure ? 1 : 0
+      //count           = var.has_infrastructure ? 1 : 0
       name            = "ValidateTerraform"
       category        = "Build"
       owner           = "AWS"
@@ -93,7 +94,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
       }
     }
     action {
-      count            = var.has_typescript ? 1 : 0
+      //count            = var.has_typescript ? 1 : 0
       name             = "Build"
       category         = "Build"
       owner            = "AWS"
@@ -108,7 +109,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
       }
     }
     action {
-      count           = var.has_predeploy_tests ? 1 : 0
+      //count           = var.has_predeploy_tests ? 1 : 0
       name            = "Predeploy Test"
       category        = "Test"
       owner           = "AWS"
@@ -164,7 +165,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
     name = "Deploy"
 
     action {
-      count     = var.has_infrastructure ? 1 : 0
+      //count     = var.has_infrastructure ? 1 : 0
       name      = "TerraformApply"
       category  = "Build"
       owner     = "AWS"
@@ -183,7 +184,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
     }
 
     action {
-      count     = var.should_publish ? 1 : 0
+      //count     = var.should_publish ? 1 : 0
       name      = "PublishToNPM"
       category  = "Build"
       owner     = "AWS"
@@ -203,11 +204,20 @@ resource "aws_codepipeline" "moar-codepipeline" {
   }
 
   stage {
-    name  = "Verify"
-    count = var.has_postdeploy_tests ? 1 : 0
+    name = "Verify"
 
     action {
-
+      //count = var.has_postdeploy_tests ? 1 : 0      
+      name            = "Postdeploy Test"
+      category        = "Test"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      version         = "1"
+      run_order       = 1
+      input_artifacts = ["InstalledSourceArtefact"]
+      configuration = {
+        ProjectName = aws_codebuild_project.postdeploy_tester.name
+      }
     }
   }
 }
