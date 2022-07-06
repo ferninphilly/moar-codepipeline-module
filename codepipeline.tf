@@ -12,6 +12,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
     type     = "S3"
     location = aws_s3_bucket.artifacts-bucket.id
   }
+
   stage {
     name = "Source"
 
@@ -30,6 +31,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
       }
     }
   }
+
   stage {
     name = "Install"
 
@@ -48,8 +50,10 @@ resource "aws_codepipeline" "moar-codepipeline" {
       }
     }
   }
+
   stage {
     name = "Validate"
+
     action {
       name            = "ValidateTypes"
       category        = "Test"
@@ -60,101 +64,104 @@ resource "aws_codepipeline" "moar-codepipeline" {
 
       configuration = {
         ProjectName  = aws_codebuild_project.typesvalidator.name
-        FunctionName = aws_lambda_function.null_lambda.name
+        FunctionName = aws_lambda_function.null_lambda.arn
       }
     }
+
     action {
-      //count           = var.has_typescript ? 1 : 0
       name            = "Lint"
       category        = "Test"
       owner           = "AWS"
-      provider        = "CodeBuild"
+      provider        = var.has_typescript ? "CodeBuild" : "Lambda"
       version         = "1"
       run_order       = 1
-      input_artifacts = ["InstalledSourceArtefact"]
+      input_artifacts = var.has_typescript ? ["InstalledSourceArtefact"] : []
 
       configuration = {
-        ProjectName = aws_codebuild_project.linter.name
+        ProjectName  = aws_codebuild_project.linter.name
+        FunctionName = aws_lambda_function.null_lambda.arn
       }
     }
+
     action {
-      //count           = var.has_infrastructure ? 1 : 0
       name            = "ValidateTerraform"
       category        = "Build"
       owner           = "AWS"
-      provider        = "CodeBuild"
+      provider        = var.has_infrastructure ? "CodeBuild" : "Lambda"
       version         = "1"
       run_order       = 1
-      input_artifacts = ["InstalledSourceArtifact"]
+      input_artifacts = var.has_infrastructure ? ["InstalledSourceArtefact"] : []
 
       configuration = {
-        ProjectName = aws_codebuild_project.tfvalidator.name
+        ProjectName  = aws_codebuild_project.tfvalidator.name
+        FunctionName = aws_lambda_function.null_lambda.arn
       }
     }
+
     action {
-      //count            = var.has_typescript ? 1 : 0
       name             = "Build"
       category         = "Build"
       owner            = "AWS"
-      provider         = "CodeBuild"
+      provider         = var.has_typescript ? "CodeBuild" : "Lambda"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["InstalledSourceArtefact"]
-      output_artifacts = ["TypescriptBuildArtifact"]
+      input_artifacts  = var.has_typescript ? ["InstalledSourceArtefact"] : []
+      output_artifacts = var.has_typescript ? ["TypescriptBuildArtifact"] : []
 
       configuration = {
-        ProjectName = aws_codebuild_project.builder.name
+        ProjectName  = aws_codebuild_project.builder.name
+        FunctionName = aws_lambda_function.null_lambda.arn
       }
     }
+
     action {
-      //count           = var.has_predeploy_tests ? 1 : 0
       name            = "Predeploy Test"
       category        = "Test"
       owner           = "AWS"
-      provider        = "CodeBuild"
+      provider        = var.has_predeploy_tests ? "CodeBuild" : "Lambda"
       version         = "1"
       run_order       = 1
-      input_artifacts = ["InstalledSourceArtefact"]
+      input_artifacts = var.has_predeploy_tests ? ["InstalledSourceArtefact"] : []
       configuration = {
-        ProjectName = aws_codebuild_project.tester.name
+        ProjectName  = aws_codebuild_project.tester.name
+        FunctionName = aws_lambda_function.null_lambda.arn
       }
     }
   }
+
   stage {
     name = "Plan"
-    //count = var.has_infrastructure ? 1 : 0
 
     action {
       name             = "TerraformPlan"
       category         = "Build"
       owner            = "AWS"
-      provider         = "CodeBuild"
+      provider         = var.has_infrastructure ? "CodeBuild" : "Lambda"
       version          = "1"
       run_order        = 1
-      input_artifacts  = [var.has_typescript ? "TypescriptBuildArtifact" : "InstalledSourceArtefact"]
+      input_artifacts  = var.has_infrastructure ? [var.has_typescript ? "TypescriptBuildArtifact" : "InstalledSourceArtefact"] : []
       output_artifacts = ["TerraformPlanArtifact"]
 
       configuration = {
         ProjectName          = aws_codebuild_project.planner.name
         EnvironmentVariables = "[{\"name\":\"TF_ACTION\",\"value\":\"plan\",\"type\":\"PLAINTEXT\"}]"
+        FunctionName         = aws_lambda_function.null_lambda.arn
       }
     }
   }
 
   stage {
     name = "Gate" # TODO: SNS
-    //count = var.has_infrastructure ? 1 : 0
 
     action {
-      name      = "TerraformPlanApproval"
-      category  = "Approval"
-      owner     = "AWS"
-      provider  = "Manual"
-      version   = "1"
-      run_order = 1
+      name     = "TerraformPlanApproval"
+      category = var.has_infrastructure ? "Approval" : "Build"
+      owner    = "AWS"
+      provider = var.has_infrastructure ? "Manual" : "Lambda"
+      version  = "1"
       configuration = {
-        CustomData = "Check your email to see plan for ${var.client}-${var.environment} and decide whether to approve"
-        //"NotificationArn" = aws_sns_topic.terragrunt-plan-topic.arn
+        CustomData   = "Check your email to see plan for ${var.client}-${var.environment} and decide whether to approve"
+        FunctionName = aws_lambda_function.null_lambda.arn
       }
     }
   }
@@ -163,58 +170,55 @@ resource "aws_codepipeline" "moar-codepipeline" {
     name = "Deploy"
 
     action {
-      //count     = var.has_infrastructure ? 1 : 0
-      name      = "TerraformApply"
-      category  = "Build"
-      owner     = "AWS"
-      provider  = "CodeBuild"
-      version   = "1"
-      run_order = 5
+      name     = "TerraformApply"
+      category = "Build"
+      owner    = "AWS"
+      provider = var.has_infrastructure ? "CodeBuild" : "Lambda"
+      version  = "1"
 
-      input_artifacts  = ["TerraformPlanArtifact"]
+      input_artifacts  = var.has_infrastructure ? ["TerraformPlanArtifact"] : []
       output_artifacts = []
 
       configuration = {
         ProjectName          = aws_codebuild_project.apply-step.name
         PrimarySource        = "TerraformPlanArtifact"
         EnvironmentVariables = "[{\"name\":\"TF_ACTION\",\"value\":\"apply\",\"type\":\"PLAINTEXT\"}]"
+        FunctionName         = aws_lambda_function.null_lambda.arn
       }
     }
 
     action {
-      //count     = var.should_publish ? 1 : 0
-      name      = "PublishToNPM"
-      category  = "Build"
-      owner     = "AWS"
-      provider  = "CodeBuild"
-      version   = "1"
-      run_order = 5
+      name     = "PublishToNPM"
+      category = "Build"
+      owner    = "AWS"
+      provider = var.should_publish ? "CodeBuild" : "Lambda"
+      version  = "1"
 
-      input_artifacts  = ["TypescriptBuildArtifact"]
-      output_artifacts = []
+      input_artifacts = var.should_publish ? ["TypescriptBuildArtifact"] : []
 
       configuration = {
         ProjectName   = aws_codebuild_project.deploy.name
         PrimarySource = "TypescriptBuildArtifact"
+        FunctionName  = aws_lambda_function.null_lambda.arn
       }
     }
-
   }
 
   stage {
     name = "Verify"
 
     action {
-      //count = var.has_postdeploy_tests ? 1 : 0      
-      name            = "Postdeploy Test"
-      category        = "Test"
-      owner           = "AWS"
-      provider        = "CodeBuild"
-      version         = "1"
-      run_order       = 1
-      input_artifacts = ["InstalledSourceArtefact"]
+      name     = "Postdeploy Test"
+      category = "Test"
+      owner    = "AWS"
+      provider = var.has_postdeploy_tests ? "CodeBuild" : "Lambda"
+      version  = "1"
+
+      input_artifacts = var.has_postdeploy_tests ? ["InstalledSourceArtefact"] : []
+
       configuration = {
-        ProjectName = aws_codebuild_project.postdeploy_tester.name
+        ProjectName  = aws_codebuild_project.postdeploy_tester.name
+        FunctionName = aws_lambda_function.null_lambda.arn
       }
     }
   }
