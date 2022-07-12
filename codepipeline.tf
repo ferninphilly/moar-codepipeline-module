@@ -5,7 +5,7 @@ resource "aws_codestarconnections_connection" "pipeline_connection" {
 
 /* This defines the maximal code pipeline */
 resource "aws_codepipeline" "moar-codepipeline" {
-  name     = "meta-${var.client}-${var.environment}-codepipeline"
+  name     = "deploy-${var.client}-${var.environment}-codepipeline"
   role_arn = aws_iam_role.codepipeline_role.arn
 
   artifact_store {

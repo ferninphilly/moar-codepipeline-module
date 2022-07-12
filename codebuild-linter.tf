@@ -13,7 +13,7 @@ resource "aws_codebuild_project" "linter" {
   environment {
     type                        = "LINUX_CONTAINER"
     compute_type                = "BUILD_GENERAL1_SMALL"
-    image                       = aws_ecr_repository.yarn-image-repo.repository_url
+    image                       = data.aws_ecr_repository.codebuild-image-repo.repository_url
     image_pull_credentials_type = "SERVICE_ROLE"
     privileged_mode             = false
   }
