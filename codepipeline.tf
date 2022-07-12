@@ -208,7 +208,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
     name = "Verify"
 
     action {
-      name     = "Postdeploy Test"
+      name     = "PostdeployTest"
       category = "Test"
       owner    = "AWS"
       provider = var.has_postdeploy_tests ? "CodeBuild" : "Lambda"
