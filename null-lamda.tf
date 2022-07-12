@@ -2,7 +2,7 @@
  */
 
 resource "aws_iam_role" "iam_for_null_lambda" {
-  name = "iam_for_null_lambda"
+  name_prefix = "iam_for_null_lambda"
 
   assume_role_policy = <<EOF
 {
@@ -24,7 +24,7 @@ EOF
 resource "aws_lambda_function" "null_lambda" {
   // A bit of a hack to allow us to use the same ZIP file everywhere.
   filename      = ".terraform/modules/codepipeline_module/null_lambda_function.zip"
-  function_name = "null_lambda"
+  function_name = "null-${var.client}-${var.environment}"
   role          = aws_iam_role.iam_for_null_lambda.arn
   handler       = "index.js"
   runtime       = "nodejs14.x"
