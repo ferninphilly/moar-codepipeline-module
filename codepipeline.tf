@@ -115,7 +115,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
     }
 
     action {
-      name            = "Predeploy Test"
+      name            = "PredeployTest"
       category        = "Test"
       owner           = "AWS"
       provider        = var.has_predeploy_tests ? "CodeBuild" : "Lambda"

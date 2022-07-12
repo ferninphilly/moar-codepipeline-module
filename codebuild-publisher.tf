@@ -1,13 +1,13 @@
-resource "aws_codebuild_project" "deploy" {
-  name           = "moar-${var.client}-deployer-build"
-  description    = "Typescript deployer for moar pipeline"
+resource "aws_codebuild_project" "publish" {
+  name           = "moar-${var.client}-publish-build"
+  description    = "Typescript package publisher for moar pipeline"
   build_timeout  = "29"
   queued_timeout = "30"
 
   service_role = aws_iam_role.codebuild_role.arn
 
   artifacts {
-    type = "NO_ARTIFACTS"
+    type = "CODEPIPELINE"
   }
 
   environment {
