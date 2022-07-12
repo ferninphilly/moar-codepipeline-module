@@ -166,7 +166,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
 
     action {
       name     = "TerraformApply"
-      category = var.has_infrastructure ? "Deploy" : "Invoke"
+      category = var.has_infrastructure ? "Build" : "Invoke"
       owner    = "AWS"
       provider = var.has_infrastructure ? "CodeBuild" : "Lambda"
       version  = "1"
@@ -183,7 +183,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
 
     action {
       name     = "PublishToNPM"
-      category = var.should_publish ? "Deploy" : "Invoke"
+      category = var.should_publish ? "Build" : "Invoke"
       owner    = "AWS"
       provider = var.should_publish ? "CodeBuild" : "Lambda"
       version  = "1"
