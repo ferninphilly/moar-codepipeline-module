@@ -22,7 +22,8 @@ EOF
 }
 
 resource "aws_lambda_function" "null_lambda" {
-  filename      = "null_lambda_function.zip"
+  // A bit of a hack to allow us to use the same ZIP file everywhere.
+  filename      = ".terraform/modules/codepipeline_module/null_lambda_function.zip"
   function_name = "null_lambda"
   role          = aws_iam_role.iam_for_null_lambda.arn
   handler       = "index.js"
