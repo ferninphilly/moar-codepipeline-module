@@ -10,6 +10,8 @@ then
     exit -1
 fi
 
+echo Getting environment
+
 ENV=$1
 export AWS_PROFILE=moar-$1
 REGION=${2:-eu-west-1}
@@ -21,17 +23,20 @@ AWS_SECRET_ACCESS_KEY=$(jq -r .secret_key <<< $CREDS)
 REPO_DNS=$(aws ecr describe-repositories --repository-names "moar-codebuild-${ENV}-image" | jq -r .repositories[0].repositoryUri | sed -e "s/\\/.*//")
 
 echo Logging into $REPO_DNS
+
 aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $REPO_DNS
 
 echo Building
+
 docker build -t moar-codebuild-$ENV-image \
-  --build-arg AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-  --build-arg AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-  --build-arg AWS_REGION=$AWS_REGION \
-  --build-arg AWS_ACCOUNT_ID=$ACCOUNT_ID \
+  --build-arg ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+  --build-arg SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" \
+  --build-arg REGION="$REGION" \
+  --build-arg ACCOUNT_ID="$ACCOUNT_ID" \
   .
 
 echo Tagging and Pushing
+
 docker tag moar-codebuild-$ENV-image:latest $REPO_DNS/moar-codebuild-$ENV-image:latest
 
 docker push $REPO_DNS/moar-codebuild-$ENV-image:latest
