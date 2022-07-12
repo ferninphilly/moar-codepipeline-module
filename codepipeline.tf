@@ -56,7 +56,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
 
     action {
       name            = "ValidateTypes"
-      category        = "Test"
+      category        = var.has_autogen_types ? "Test" : "Invoke"
       owner           = "AWS"
       provider        = var.has_autogen_types ? "CodeBuild" : "Lambda"
       version         = "1"
@@ -70,7 +70,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
 
     action {
       name            = "Lint"
-      category        = "Test"
+      category        = var.has_typescript ? "Test" : "Invoke"
       owner           = "AWS"
       provider        = var.has_typescript ? "CodeBuild" : "Lambda"
       version         = "1"
@@ -85,7 +85,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
 
     action {
       name            = "ValidateTerraform"
-      category        = "Build"
+      category        = var.has_infrastructure ? "Test" : "Invoke"
       owner           = "AWS"
       provider        = var.has_infrastructure ? "CodeBuild" : "Lambda"
       version         = "1"
@@ -100,7 +100,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
 
     action {
       name             = "Build"
-      category         = "Build"
+      category         = var.has_typescript ? "Build" : "Invoke"
       owner            = "AWS"
       provider         = var.has_typescript ? "CodeBuild" : "Lambda"
       version          = "1"
@@ -116,7 +116,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
 
     action {
       name            = "PredeployTest"
-      category        = "Test"
+      category        = var.has_predeploy_tests ? "Test" : "Invoke"
       owner           = "AWS"
       provider        = var.has_predeploy_tests ? "CodeBuild" : "Lambda"
       version         = "1"
@@ -134,7 +134,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
 
     action {
       name             = "TerraformPlan"
-      category         = "Build"
+      category         = var.has_infrastructure ? "Build" : "Invoke"
       owner            = "AWS"
       provider         = var.has_infrastructure ? "CodeBuild" : "Lambda"
       version          = "1"
@@ -155,7 +155,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
 
     action {
       name     = "TerraformPlanApproval"
-      category = var.has_infrastructure ? "Approval" : "Build"
+      category = var.has_infrastructure ? "Approval" : "Invoke"
       owner    = "AWS"
       provider = var.has_infrastructure ? "Manual" : "Lambda"
       version  = "1"
@@ -171,7 +171,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
 
     action {
       name     = "TerraformApply"
-      category = "Build"
+      category = var.has_infrastructure ? "Deploy" : "Invoke"
       owner    = "AWS"
       provider = var.has_infrastructure ? "CodeBuild" : "Lambda"
       version  = "1"
@@ -189,7 +189,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
 
     action {
       name     = "PublishToNPM"
-      category = "Build"
+      category = var.should_publish ? "Deploy" : "Invoke"
       owner    = "AWS"
       provider = var.should_publish ? "CodeBuild" : "Lambda"
       version  = "1"
@@ -209,7 +209,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
 
     action {
       name     = "PostdeployTest"
-      category = "Test"
+      category = var.has_postdeploy_tests ? "Test" : "Invoke"
       owner    = "AWS"
       provider = var.has_postdeploy_tests ? "CodeBuild" : "Lambda"
       version  = "1"
