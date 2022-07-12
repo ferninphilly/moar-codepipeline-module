@@ -62,10 +62,9 @@ resource "aws_codepipeline" "moar-codepipeline" {
       version         = "1"
       input_artifacts = var.has_autogen_types ? ["InstalledSourceArtefact"] : []
 
-      configuration = {
-        ProjectName  = aws_codebuild_project.typesvalidator.name
-        FunctionName = aws_lambda_function.null_lambda.arn
-      }
+      configuration = var.has_autogen_types ? {
+        ProjectName = aws_codebuild_project.typesvalidator.name
+      } : { FunctionName = aws_lambda_function.null_lambda.arn }
     }
 
     action {
@@ -77,10 +76,9 @@ resource "aws_codepipeline" "moar-codepipeline" {
       run_order       = 1
       input_artifacts = var.has_typescript ? ["InstalledSourceArtefact"] : []
 
-      configuration = {
-        ProjectName  = aws_codebuild_project.linter.name
-        FunctionName = aws_lambda_function.null_lambda.arn
-      }
+      configuration = var.has_typescript ? {
+        ProjectName = aws_codebuild_project.linter.name
+      } : { FunctionName = aws_lambda_function.null_lambda.arn }
     }
 
     action {
@@ -92,10 +90,10 @@ resource "aws_codepipeline" "moar-codepipeline" {
       run_order       = 1
       input_artifacts = var.has_infrastructure ? ["InstalledSourceArtefact"] : []
 
-      configuration = {
-        ProjectName  = aws_codebuild_project.tfvalidator.name
-        FunctionName = aws_lambda_function.null_lambda.arn
-      }
+      configuration = var.has_infrastructure ? {
+        ProjectName = aws_codebuild_project.tfvalidator.name
+      } : { FunctionName = aws_lambda_function.null_lambda.arn }
+
     }
 
     action {
@@ -108,10 +106,9 @@ resource "aws_codepipeline" "moar-codepipeline" {
       input_artifacts  = var.has_typescript ? ["InstalledSourceArtefact"] : []
       output_artifacts = var.has_typescript ? ["TypescriptBuildArtifact"] : []
 
-      configuration = {
-        ProjectName  = aws_codebuild_project.builder.name
-        FunctionName = aws_lambda_function.null_lambda.arn
-      }
+      configuration = var.has_typescript ? {
+        ProjectName = aws_codebuild_project.builder.name
+      } : { FunctionName = aws_lambda_function.null_lambda.arn }
     }
 
     action {
@@ -122,10 +119,10 @@ resource "aws_codepipeline" "moar-codepipeline" {
       version         = "1"
       run_order       = 1
       input_artifacts = var.has_predeploy_tests ? ["InstalledSourceArtefact"] : []
-      configuration = {
-        ProjectName  = aws_codebuild_project.tester.name
-        FunctionName = aws_lambda_function.null_lambda.arn
-      }
+
+      configuration = var.has_predeploy_tests ? {
+        ProjectName = aws_codebuild_project.tester.name
+      } : { FunctionName = aws_lambda_function.null_lambda.arn }
     }
   }
 
@@ -142,11 +139,10 @@ resource "aws_codepipeline" "moar-codepipeline" {
       input_artifacts  = var.has_infrastructure ? [var.has_typescript ? "TypescriptBuildArtifact" : "InstalledSourceArtefact"] : []
       output_artifacts = ["TerraformPlanArtifact"]
 
-      configuration = {
+      configuration = var.has_infrastructure ? {
         ProjectName          = aws_codebuild_project.planner.name
         EnvironmentVariables = "[{\"name\":\"TF_ACTION\",\"value\":\"plan\",\"type\":\"PLAINTEXT\"}]"
-        FunctionName         = aws_lambda_function.null_lambda.arn
-      }
+      } : { FunctionName = aws_lambda_function.null_lambda.arn }
     }
   }
 
@@ -159,10 +155,9 @@ resource "aws_codepipeline" "moar-codepipeline" {
       owner    = "AWS"
       provider = var.has_infrastructure ? "Manual" : "Lambda"
       version  = "1"
-      configuration = {
-        CustomData   = "Check your email to see plan for ${var.client}-${var.environment} and decide whether to approve"
-        FunctionName = aws_lambda_function.null_lambda.arn
-      }
+      configuration = var.has_infrastructure ? {
+        CustomData = "Check your email to see plan for ${var.client}-${var.environment} and decide whether to approve"
+      } : { FunctionName = aws_lambda_function.null_lambda.arn }
     }
   }
 
@@ -179,12 +174,11 @@ resource "aws_codepipeline" "moar-codepipeline" {
       input_artifacts  = var.has_infrastructure ? ["TerraformPlanArtifact"] : []
       output_artifacts = []
 
-      configuration = {
+      configuration = var.has_infrastructure ? {
         ProjectName          = aws_codebuild_project.apply-step.name
         PrimarySource        = "TerraformPlanArtifact"
         EnvironmentVariables = "[{\"name\":\"TF_ACTION\",\"value\":\"apply\",\"type\":\"PLAINTEXT\"}]"
-        FunctionName         = aws_lambda_function.null_lambda.arn
-      }
+      } : { FunctionName = aws_lambda_function.null_lambda.arn }
     }
 
     action {
@@ -196,11 +190,10 @@ resource "aws_codepipeline" "moar-codepipeline" {
 
       input_artifacts = var.should_publish ? ["TypescriptBuildArtifact"] : []
 
-      configuration = {
+      configuration = var.should_publish ? {
         ProjectName   = aws_codebuild_project.publish.name
         PrimarySource = "TypescriptBuildArtifact"
-        FunctionName  = aws_lambda_function.null_lambda.arn
-      }
+      } : { FunctionName = aws_lambda_function.null_lambda.arn }
     }
   }
 
@@ -216,10 +209,9 @@ resource "aws_codepipeline" "moar-codepipeline" {
 
       input_artifacts = var.has_postdeploy_tests ? ["InstalledSourceArtefact"] : []
 
-      configuration = {
-        ProjectName  = aws_codebuild_project.postdeploy_tester.name
-        FunctionName = aws_lambda_function.null_lambda.arn
-      }
+      configuration = var.has_postdeploy_tests ? {
+        ProjectName = aws_codebuild_project.postdeploy_tester.name
+      } : { FunctionName = aws_lambda_function.null_lambda.arn }
     }
   }
 }
