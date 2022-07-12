@@ -197,7 +197,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
       input_artifacts = var.should_publish ? ["TypescriptBuildArtifact"] : []
 
       configuration = {
-        ProjectName   = aws_codebuild_project.deploy.name
+        ProjectName   = aws_codebuild_project.publish.name
         PrimarySource = "TypescriptBuildArtifact"
         FunctionName  = aws_lambda_function.null_lambda.arn
       }
