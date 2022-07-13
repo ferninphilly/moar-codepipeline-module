@@ -13,13 +13,13 @@ data "archive_file" "null_lambda" {
 
   source_dir = "null-lambda-function"
   depends_on = [
-    "null_resource.null_lambda_install"
+    null_resource.null_lambda_install
   ]
 }
 
 resource "aws_lambda_function" "null_lambda" {
   // A bit of a hack to allow us to use the same ZIP file everywhere.
-  filename      = archive_file.output_path
+  filename      = archive_file.null_lambda.output_path
   function_name = "null-${var.client}-${var.environment}"
   role          = aws_iam_role.iam_for_null_lambda.arn
   handler       = "index.handler"
