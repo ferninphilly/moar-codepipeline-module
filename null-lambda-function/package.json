@@ -1,0 +1,11 @@
+{
+  "name": "null-lambda-function",
+  "version": "1.0.0",
+  "description": "Empty function for CodePipeline - always succeeds",
+  "main": "index.js",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@aws-sdk/client-codepipeline": "^3.128.0",
+    "json-circular-stringify": "^1.0.1"
+  }
+}
