@@ -6,7 +6,7 @@ resource "aws_lambda_function" "null_lambda" {
   filename      = ".terraform/modules/codepipeline_module/null_lambda_function.zip"
   function_name = "null-${var.client}-${var.environment}"
   role          = aws_iam_role.iam_for_null_lambda.arn
-  handler       = "index.js"
+  handler       = "index.handler"
   runtime       = "nodejs14.x"
 }
 
