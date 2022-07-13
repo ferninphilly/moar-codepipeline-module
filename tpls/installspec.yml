@@ -5,7 +5,9 @@ phases:
   install:
     on-failure: ABORT
     commands:
-      - find -name 'package.json' | sed -e '/.\/node_modules\//d' -e 's/package.json//' | xargs -iX sh -c "echo Installing to X && yarn install --frozen-lockfile --cache-folder ./cache --cwd X"
+      # install all package.json files, starting at the shortest path and working to the longest (i.e. doing the root first, if it exists)
+      # - the order matters because .npmrc will typically be established in the root first
+      - find -name "package.json" | awk '{ print length, $0 }' | sort -n -s | cut -d" " -f2- | sed -e '/.\/node_modules\//d' -e 's/package.json//' | xargs -iX sh -c "echo Installing to X && yarn install --frozen-lockfile --cache-folder ./cache --cwd X"
 artifacts:
   files:
     - "**/*"
