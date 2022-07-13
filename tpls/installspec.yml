@@ -5,7 +5,7 @@ phases:
   install:
     on-failure: ABORT
     commands:
-      - find -name 'package.json' | sed -e '/.\/node_modules\//d' -e 's/package.json//' | xargs -n 1 yarn install --frozen-lockfile --cache-folder ./cache --cwd
+      - find -name 'package.json' | sed -e '/.\/node_modules\//d' -e 's/package.json//' | xargs -iX sh -c "echo Installing to X && yarn install --frozen-lockfile --cache-folder ./cache --cwd X"
 artifacts:
   files:
     - "**/*"
