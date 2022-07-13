@@ -19,6 +19,7 @@ ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 CREDS=$(aws secretsmanager get-secret-value --secret-id codebuild/accesskeys | jq -r .SecretString)
 AWS_ACCESS_KEY_ID=$(jq -r .key_id <<< $CREDS)
 AWS_SECRET_ACCESS_KEY=$(jq -r .secret_key <<< $CREDS)
+GIT_TOKEN=$(jq -r .git_token <<< $CREDS)
 
 REPO_DNS=$(aws ecr describe-repositories --repository-names "moar-codebuild-${ENV}-image" | jq -r .repositories[0].repositoryUri | sed -e "s/\\/.*//")
 
@@ -33,6 +34,7 @@ docker build -t moar-codebuild-$ENV-image \
   --build-arg SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" \
   --build-arg REGION="$REGION" \
   --build-arg ACCOUNT_ID="$ACCOUNT_ID" \
+  --build-arg GIT_TOKEN="$GIT_TOKEN" \
   .
 
 echo Tagging and Pushing
