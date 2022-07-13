@@ -11,7 +11,7 @@ data "archive_file" "null_lambda" {
   type        = "zip"
   output_path = "${path.module}/null_lambda.zip"
 
-  source_dir = "null-lambda-function"
+  source_dir = "${path.module}/null-lambda-function"
   depends_on = [
     null_resource.null_lambda_install
   ]
