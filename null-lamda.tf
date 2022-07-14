@@ -2,14 +2,14 @@
  */
 
 data "external" "null_lambda_file_list" {
-  program = ["bash", "echo {\"filecontents\": \"$(ls -la ${path.module}/null-lambda-function/ | tr '\n' ' ')\"}"]
+  program = ["bash", "-c", "echo {\\\"filelist\\\": \\\"$(ls -la ${path.module}/null-lambda-function/ | tr '\n' ' ')\\\"}"]
 }
 
 resource "null_resource" "null_lambda_install" {
   triggers = {
     yarnlock    = filesha256("${path.module}/null-lambda-function/yarn.lock")
     packagejson = filesha256("${path.module}/null-lambda-function/package.json")
-    filelist    = external.null_lambda_file_list.result
+    filelist    = data.external.null_lambda_file_list.result.filelist
   }
   provisioner "local-exec" {
     command = "yarn install --cwd ${path.module}/null-lambda-function"
@@ -27,17 +27,13 @@ data "archive_file" "null_lambda" {
 }
 
 resource "aws_lambda_function" "null_lambda" {
-  depends_on = [
-    data.archive_file.null_lambda
-  ]
-
-  filename      = data.archive_file.null_lambda.output_path
-  function_name = "null-${var.client}-${var.environment}"
-  role          = aws_iam_role.iam_for_null_lambda.arn
-  handler       = "index.handler"
-  runtime       = "nodejs14.x"
+  filename         = data.archive_file.null_lambda.output_path
+  source_code_hash = data.archive_file.null_lambda.output_base64sha256
+  function_name    = "null-${var.client}-${var.environment}"
+  role             = aws_iam_role.iam_for_null_lambda.arn
+  handler          = "index.handler"
+  runtime          = "nodejs14.x"
 }
-
 
 resource "aws_iam_role" "iam_for_null_lambda" {
   name = "null-${var.client}-${var.environment}-role"
