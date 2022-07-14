@@ -2,6 +2,10 @@
  */
 
 resource "null_resource" "null_lambda_install" {
+  triggers = {
+    yarnlock    = filesha256("${path.module}/null-lambda-function/yarn.lock")
+    packagejson = filesha256("${path.module}/null-lambda-function/package.json")
+  }
   provisioner "local-exec" {
     command = "yarn install --cwd ${path.module}/null-lambda-function"
   }
@@ -18,7 +22,10 @@ data "archive_file" "null_lambda" {
 }
 
 resource "aws_lambda_function" "null_lambda" {
-  // A bit of a hack to allow us to use the same ZIP file everywhere.
+  depends_on = [
+    data.archive_file.null_lambda
+  ]
+
   filename      = data.archive_file.null_lambda.output_path
   function_name = "null-${var.client}-${var.environment}"
   role          = aws_iam_role.iam_for_null_lambda.arn
