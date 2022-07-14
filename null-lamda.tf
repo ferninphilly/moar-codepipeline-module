@@ -1,10 +1,15 @@
 /* Null lambda - for removing pipeline stages
  */
 
+data "external" "null_lambda_file_list" {
+  program = ["bash", "echo {\"filecontents\": \"$(ls -la ${path.module}/null-lambda-function/ | tr '\n' ' ')\"}"]
+}
+
 resource "null_resource" "null_lambda_install" {
   triggers = {
     yarnlock    = filesha256("${path.module}/null-lambda-function/yarn.lock")
     packagejson = filesha256("${path.module}/null-lambda-function/package.json")
+    filelist    = external.null_lambda_file_list.result
   }
   provisioner "local-exec" {
     command = "yarn install --cwd ${path.module}/null-lambda-function"
