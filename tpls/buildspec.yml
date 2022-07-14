@@ -4,6 +4,9 @@ version: 0.2
 env:
   variables:
     NODE_ENV: "production"
+  secrets-manager:
+    NPM_AUTH_TOKEN: "npmjs/read/authToken"
+
 phases:
   install:
     runtime-versions:
@@ -11,6 +14,7 @@ phases:
   pre_build:
     commands:
         # - curl -H "Content-Type:application/json" -X POST -d @deployblocks/startitup.json ${SLACK_CHANNEL}
+        - echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ./.npmrc
         - yarn install --production=false --ignore-engines
   build:
     commands:
