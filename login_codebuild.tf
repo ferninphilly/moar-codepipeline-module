@@ -152,6 +152,11 @@ resource "aws_iam_policy" "codebuild_access_policy" {
             ],
           "Effect": "Allow",
           "Resource": "*"
+        },
+        {
+            "Action": "secretsmanager:GetSecretValue",
+            "Effect": "Allow",
+            "Resource": "arn:aws:secretsmanager:*:*:secret:npmjs/read/authToken*"
         }
     ]
 }
