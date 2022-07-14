@@ -55,7 +55,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
     name = "Validate"
 
     action {
-      name            = "ValidateTypes"
+      name            = var.has_autogen_types ? "ValidateTypes" : "none"
       category        = var.has_autogen_types ? "Test" : "Invoke"
       owner           = "AWS"
       provider        = var.has_autogen_types ? "CodeBuild" : "Lambda"
@@ -68,7 +68,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
     }
 
     action {
-      name            = "Lint"
+      name            = var.has_typescript ? "Lint" : "none"
       category        = var.has_typescript ? "Test" : "Invoke"
       owner           = "AWS"
       provider        = var.has_typescript ? "CodeBuild" : "Lambda"
@@ -82,7 +82,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
     }
 
     action {
-      name            = "ValidateTerraform"
+      name            = var.has_infrastructure ? "ValidateTerraform" : "none"
       category        = var.has_infrastructure ? "Test" : "Invoke"
       owner           = "AWS"
       provider        = var.has_infrastructure ? "CodeBuild" : "Lambda"
@@ -97,7 +97,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
     }
 
     action {
-      name             = "Build"
+      name             = var.has_typescript ? "Build" : "none"
       category         = var.has_typescript ? "Build" : "Invoke"
       owner            = "AWS"
       provider         = var.has_typescript ? "CodeBuild" : "Lambda"
@@ -112,7 +112,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
     }
 
     action {
-      name            = "PredeployTest"
+      name            = var.has_predeploy_tests ? "PredeployTest" : "none"
       category        = var.has_predeploy_tests ? "Test" : "Invoke"
       owner           = "AWS"
       provider        = var.has_predeploy_tests ? "CodeBuild" : "Lambda"
@@ -130,7 +130,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
     name = "Plan"
 
     action {
-      name             = "TerraformPlan"
+      name             = var.has_infrastructure ? "TerraformPlan" : "none"
       category         = var.has_infrastructure ? "Build" : "Invoke"
       owner            = "AWS"
       provider         = var.has_infrastructure ? "CodeBuild" : "Lambda"
@@ -150,7 +150,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
     name = "Gate" # TODO: SNS
 
     action {
-      name     = "TerraformPlanApproval"
+      name     = var.has_infrastructure ? "TerraformPlanApproval" : "none"
       category = var.has_infrastructure ? "Approval" : "Invoke"
       owner    = "AWS"
       provider = var.has_infrastructure ? "Manual" : "Lambda"
@@ -165,7 +165,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
     name = "Deploy"
 
     action {
-      name     = "TerraformApply"
+      name     = var.has_infrastructure ? "TerraformApply" : "none"
       category = var.has_infrastructure ? "Build" : "Invoke"
       owner    = "AWS"
       provider = var.has_infrastructure ? "CodeBuild" : "Lambda"
@@ -182,7 +182,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
     }
 
     action {
-      name     = "PublishToNPM"
+      name     = var.should_publish ? "PublishToNPM" : "none"
       category = var.should_publish ? "Build" : "Invoke"
       owner    = "AWS"
       provider = var.should_publish ? "CodeBuild" : "Lambda"
@@ -201,7 +201,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
     name = "Verify"
 
     action {
-      name     = "PostdeployTest"
+      name     = var.has_postdeploy_tests ? "PostdeployTest" : "none"
       category = var.has_postdeploy_tests ? "Test" : "Invoke"
       owner    = "AWS"
       provider = var.has_postdeploy_tests ? "CodeBuild" : "Lambda"
