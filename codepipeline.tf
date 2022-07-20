@@ -1,6 +1,5 @@
-resource "aws_codestarconnections_connection" "pipeline_connection" {
-  name          = "${var.client}-${var.environment}-cs-cnx"
-  provider_type = "GitHub"
+data "aws_codestarconnections_connection" "pipeline_connection" {
+  name = "codicesinteractive"
 }
 
 /* This defines the maximal code pipeline */
