@@ -7,7 +7,7 @@ ARG ACCOUNT_ID
 ARG GIT_TOKEN
 
 RUN apk --no-cache update upgrade
-RUN apk add --no-cache --update nodejs npm yarn bash curl git wget aws-cli
+RUN apk add --no-cache --update nodejs npm yarn bash curl git wget aws-cli ffmpeg jq
 RUN yarn global add typescript
 
 RUN git config --global url."https://oauth2:$GIT_TOKEN@github.com".insteadOf https://github.com
