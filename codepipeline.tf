@@ -24,7 +24,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
       output_artifacts = ["SourceArtifact"]
 
       configuration = {
-        ConnectionArn    = aws_codestarconnections_connection.pipeline_connection.arn
+        ConnectionArn    = data.aws_codestarconnections_connection.pipeline_connection.arn
         FullRepositoryId = "${var.repository_owner}/${var.repository_name}"
         BranchName       = var.gitenv == "" ? var.environment : var.gitenv
       }
