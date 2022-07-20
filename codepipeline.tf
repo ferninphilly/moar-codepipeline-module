@@ -1,5 +1,5 @@
 data "aws_codestarconnections_connection" "pipeline_connection" {
-  name = "codicesinteractive"
+  name = "codepipeline-connection" /* created in the common-infrastructure folder */
 }
 
 /* This defines the maximal code pipeline */
