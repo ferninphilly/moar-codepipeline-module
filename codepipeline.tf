@@ -42,7 +42,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
       provider         = "CodeBuild"
       version          = "1"
       input_artifacts  = ["SourceArtifact"]
-      output_artifacts = ["InstalledSourceArtefact"]
+      output_artifacts = ["InstalledSourceArtifact"]
 
       configuration = {
         ProjectName = aws_codebuild_project.installer.name
@@ -59,7 +59,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
       owner           = "AWS"
       provider        = var.has_autogen_types ? "CodeBuild" : "Lambda"
       version         = "1"
-      input_artifacts = var.has_autogen_types ? ["InstalledSourceArtefact"] : []
+      input_artifacts = var.has_autogen_types ? ["InstalledSourceArtifact"] : []
 
       configuration = var.has_autogen_types ? {
         ProjectName = aws_codebuild_project.typesvalidator.name
@@ -73,7 +73,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
       provider        = var.has_typescript ? "CodeBuild" : "Lambda"
       version         = "1"
       run_order       = 1
-      input_artifacts = var.has_typescript ? ["InstalledSourceArtefact"] : []
+      input_artifacts = var.has_typescript ? ["InstalledSourceArtifact"] : []
 
       configuration = var.has_typescript ? {
         ProjectName = aws_codebuild_project.linter.name
@@ -87,7 +87,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
       provider        = var.has_infrastructure ? "CodeBuild" : "Lambda"
       version         = "1"
       run_order       = 1
-      input_artifacts = var.has_infrastructure ? ["InstalledSourceArtefact"] : []
+      input_artifacts = var.has_infrastructure ? ["InstalledSourceArtifact"] : []
 
       configuration = var.has_infrastructure ? {
         ProjectName = aws_codebuild_project.tfvalidator.name
@@ -102,12 +102,30 @@ resource "aws_codepipeline" "moar-codepipeline" {
       provider         = var.has_typescript ? "CodeBuild" : "Lambda"
       version          = "1"
       run_order        = 1
-      input_artifacts  = var.has_typescript ? ["InstalledSourceArtefact"] : []
-      output_artifacts = var.has_typescript ? ["TypescriptBuildArtifact"] : []
+      input_artifacts  = var.has_typescript ? ["InstalledSourceArtifact"] : []
+      output_artifacts = var.has_typescript ? ["BuildArtifact"] : []
 
       configuration = var.has_typescript ? {
         ProjectName = aws_codebuild_project.builder.name
       } : { FunctionName = aws_lambda_function.null_lambda.function_name }
+    }
+
+    dynamic "action" {
+      for_each = (length(var.website_bucket_name) > 0 || var.has_typescript) ? ["1"] : []
+      content {
+        name             = "Build"
+        category         = "Build"
+        owner            = "AWS"
+        provider         = "CodeBuild"
+        version          = "1"
+        run_order        = 1
+        input_artifacts  = "InstalledSourceArtifact"
+        output_artifacts = ["BuildArtifact", "BuildDistArtifact"]
+
+        configuration = {
+          ProjectName = aws_codebuild_project.builder.name
+        }
+      }
     }
 
     action {
@@ -117,7 +135,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
       provider        = var.has_predeploy_tests ? "CodeBuild" : "Lambda"
       version         = "1"
       run_order       = 1
-      input_artifacts = var.has_predeploy_tests ? ["InstalledSourceArtefact"] : []
+      input_artifacts = var.has_predeploy_tests ? ["InstalledSourceArtifact"] : []
 
       configuration = var.has_predeploy_tests ? {
         ProjectName = aws_codebuild_project.tester.name
@@ -135,7 +153,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
       provider         = var.has_infrastructure ? "CodeBuild" : "Lambda"
       version          = "1"
       run_order        = 1
-      input_artifacts  = var.has_infrastructure ? [var.has_typescript ? "TypescriptBuildArtifact" : "InstalledSourceArtefact"] : []
+      input_artifacts  = var.has_infrastructure ? [var.has_typescript ? "BuildArtifact" : "InstalledSourceArtifact"] : []
       output_artifacts = ["TerraformPlanArtifact"]
 
       configuration = var.has_infrastructure ? {
@@ -187,12 +205,32 @@ resource "aws_codepipeline" "moar-codepipeline" {
       provider = var.should_publish ? "CodeBuild" : "Lambda"
       version  = "1"
 
-      input_artifacts = var.should_publish ? ["TypescriptBuildArtifact"] : []
+      input_artifacts = var.should_publish ? ["BuildArtifact"] : []
 
       configuration = var.should_publish ? {
         ProjectName   = aws_codebuild_project.publish.name
-        PrimarySource = "TypescriptBuildArtifact"
+        PrimarySource = "BuildArtifact"
       } : { FunctionName = aws_lambda_function.null_lambda.function_name }
+    }
+
+    dynamic "action" {
+      for_each = length(var.website_bucket_name) > 0 ? ["1"] : []
+      content {
+        category = "DeployWebsite"
+        configuration = {
+          "BucketName" = var.website_bucket_name
+          "Extract"    = "true"
+        }
+        input_artifacts = [
+          "BuildDistArtifact",
+        ]
+        name             = "Deploy"
+        output_artifacts = []
+        owner            = "AWS"
+        provider         = "S3"
+        run_order        = 1
+        version          = "1"
+      }
     }
   }
 
@@ -206,7 +244,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
       provider = var.has_postdeploy_tests ? "CodeBuild" : "Lambda"
       version  = "1"
 
-      input_artifacts = var.has_postdeploy_tests ? ["InstalledSourceArtefact"] : []
+      input_artifacts = var.has_postdeploy_tests ? ["InstalledSourceArtifact"] : []
 
       configuration = var.has_postdeploy_tests ? {
         ProjectName = aws_codebuild_project.postdeploy_tester.name

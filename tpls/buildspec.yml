@@ -12,4 +12,9 @@ artifacts:
   files:
     - "**/*"
   exclude-paths:
-    - ./**/infrastructure
+    - ./deployment
+  secondary-artifacts:
+    dist:
+      files:
+        - "**/*"
+      base-directory: dist

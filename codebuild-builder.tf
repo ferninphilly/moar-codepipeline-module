@@ -22,6 +22,12 @@ resource "aws_codebuild_project" "builder" {
       value = "plan"
       type  = "PLAINTEXT"
     }
+
+    environment_variable {
+      name  = "ENVIRONMENT"
+      value = var.environment
+      type  = "PLAINTEXT"
+    }
   }
 
   source {
