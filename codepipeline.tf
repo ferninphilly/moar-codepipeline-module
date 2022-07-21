@@ -53,61 +53,69 @@ resource "aws_codepipeline" "moar-codepipeline" {
   stage {
     name = "Validate"
 
-    action {
-      name            = var.has_autogen_types ? "ValidateTypes" : "noneA"
-      category        = var.has_autogen_types ? "Test" : "Invoke"
-      owner           = "AWS"
-      provider        = var.has_autogen_types ? "CodeBuild" : "Lambda"
-      version         = "1"
-      input_artifacts = var.has_autogen_types ? ["InstalledSourceArtifact"] : []
+    dynamic "action" {
+      for_each = var.has_autogen_types ? ["1"] : []
+      content {
+        name            = "ValidateTypes"
+        category        = "Test"
+        owner           = "AWS"
+        provider        = "CodeBuild"
+        version         = "1"
+        input_artifacts = ["InstalledSourceArtifact"]
 
-      configuration = var.has_autogen_types ? {
-        ProjectName = aws_codebuild_project.typesvalidator.name
-      } : { FunctionName = aws_lambda_function.null_lambda.function_name }
+        configuration = { ProjectName = aws_codebuild_project.typesvalidator.name }
+      }
     }
 
-    action {
-      name            = var.has_typescript ? "Lint" : "noneB"
-      category        = var.has_typescript ? "Test" : "Invoke"
-      owner           = "AWS"
-      provider        = var.has_typescript ? "CodeBuild" : "Lambda"
-      version         = "1"
-      run_order       = 1
-      input_artifacts = var.has_typescript ? ["InstalledSourceArtifact"] : []
+    dynamic "action" {
+      for_each = var.has_typescript ? ["1"] : []
+      content {
+        name            = "Lint"
+        category        = "Test"
+        owner           = "AWS"
+        provider        = "CodeBuild"
+        version         = "1"
+        run_order       = 1
+        input_artifacts = ["InstalledSourceArtifact"]
 
-      configuration = var.has_typescript ? {
-        ProjectName = aws_codebuild_project.linter.name
-      } : { FunctionName = aws_lambda_function.null_lambda.function_name }
+        configuration = { ProjectName = aws_codebuild_project.linter.name }
+      }
     }
 
-    action {
-      name            = var.has_infrastructure ? "ValidateTerraform" : "noneC"
-      category        = var.has_infrastructure ? "Test" : "Invoke"
-      owner           = "AWS"
-      provider        = var.has_infrastructure ? "CodeBuild" : "Lambda"
-      version         = "1"
-      run_order       = 1
-      input_artifacts = var.has_infrastructure ? ["InstalledSourceArtifact"] : []
+    dynamic "action" {
+      for_each = var.has_infrastructure ? ["1"] : []
+      content {
+        name            = "ValidateTerraform"
+        category        = "Test"
+        owner           = "AWS"
+        provider        = "CodeBuild"
+        version         = "1"
+        run_order       = 1
+        input_artifacts = ["InstalledSourceArtifact"]
 
-      configuration = var.has_infrastructure ? {
-        ProjectName = aws_codebuild_project.tfvalidator.name
-      } : { FunctionName = aws_lambda_function.null_lambda.function_name }
+        configuration = {
+          ProjectName = aws_codebuild_project.tfvalidator.name
+        }
 
+      }
     }
 
-    action {
-      name             = var.has_typescript ? "Build" : "noneD"
-      category         = var.has_typescript ? "Build" : "Invoke"
-      owner            = "AWS"
-      provider         = var.has_typescript ? "CodeBuild" : "Lambda"
-      version          = "1"
-      run_order        = 1
-      input_artifacts  = var.has_typescript ? ["InstalledSourceArtifact"] : []
-      output_artifacts = var.has_typescript ? ["BuildArtifact"] : []
+    dynamic "action" {
+      for_each = var.has_typescript ? ["1"] : []
+      action {
+        name             = "Build"
+        category         = "Build"
+        owner            = "AWS"
+        provider         = "CodeBuild"
+        version          = "1"
+        run_order        = 1
+        input_artifacts  = ["InstalledSourceArtifact"]
+        output_artifacts = ["BuildArtifact"]
 
-      configuration = var.has_typescript ? {
-        ProjectName = aws_codebuild_project.builder.name
-      } : { FunctionName = aws_lambda_function.null_lambda.function_name }
+        configuration = {
+          ProjectName = aws_codebuild_project.builder.name
+        }
+      }
     }
 
     dynamic "action" {
@@ -128,89 +136,103 @@ resource "aws_codepipeline" "moar-codepipeline" {
       }
     }
 
-    action {
-      name            = var.has_predeploy_tests ? "PredeployTest" : "noneE"
-      category        = var.has_predeploy_tests ? "Test" : "Invoke"
-      owner           = "AWS"
-      provider        = var.has_predeploy_tests ? "CodeBuild" : "Lambda"
-      version         = "1"
-      run_order       = 1
-      input_artifacts = var.has_predeploy_tests ? ["InstalledSourceArtifact"] : []
+    dynamic "action" {
+      for_each = var.has_predeploy_tests ? ["1"] : []
+      content {
+        name            = "PredeployTest"
+        category        = "Test"
+        owner           = "AWS"
+        provider        = "CodeBuild"
+        version         = "1"
+        run_order       = 1
+        input_artifacts = ["InstalledSourceArtifact"]
 
-      configuration = var.has_predeploy_tests ? {
-        ProjectName = aws_codebuild_project.tester.name
-      } : { FunctionName = aws_lambda_function.null_lambda.function_name }
+        configuration = {
+          ProjectName = aws_codebuild_project.tester.name
+        }
+      }
     }
   }
 
-  stage {
-    name = "Plan"
+  dynamic "stage" {
+    for_each = var.has_infrastructure ? ["1"] : []
+    content {
+      name = "Plan"
 
-    action {
-      name             = var.has_infrastructure ? "TerraformPlan" : "noneF"
-      category         = var.has_infrastructure ? "Build" : "Invoke"
-      owner            = "AWS"
-      provider         = var.has_infrastructure ? "CodeBuild" : "Lambda"
-      version          = "1"
-      run_order        = 1
-      input_artifacts  = var.has_infrastructure ? [var.has_typescript ? "BuildArtifact" : "InstalledSourceArtifact"] : []
-      output_artifacts = ["TerraformPlanArtifact"]
+      action {
+        name             = "TerraformPlan"
+        category         = "Build"
+        owner            = "AWS"
+        provider         = "CodeBuild"
+        version          = "1"
+        run_order        = 1
+        input_artifacts  = var.has_typescript ? "BuildArtifact" : "InstalledSourceArtifact"
+        output_artifacts = ["TerraformPlanArtifact"]
 
-      configuration = var.has_infrastructure ? {
-        ProjectName          = aws_codebuild_project.planner.name
-        EnvironmentVariables = "[{\"name\":\"TF_ACTION\",\"value\":\"plan\",\"type\":\"PLAINTEXT\"}]"
-      } : { FunctionName = aws_lambda_function.null_lambda.function_name }
+        configuration = {
+          ProjectName          = aws_codebuild_project.planner.name
+          EnvironmentVariables = "[{\"name\":\"TF_ACTION\",\"value\":\"plan\",\"type\":\"PLAINTEXT\"}]"
+        }
+      }
     }
   }
 
-  stage {
-    name = "Gate" # TODO: SNS
+  dynamic "stage" {
+    for_each = var.has_infrastructure ? ["1"] : []
+    stage {
+      name = "Gate" # TODO: SNS
 
-    action {
-      name     = var.has_infrastructure ? "TerraformPlanApproval" : "noneG"
-      category = var.has_infrastructure ? "Approval" : "Invoke"
-      owner    = "AWS"
-      provider = var.has_infrastructure ? "Manual" : "Lambda"
-      version  = "1"
-      configuration = var.has_infrastructure ? {
-        CustomData = "Check your email to see plan for ${var.client}-${var.environment} and decide whether to approve"
-      } : { FunctionName = aws_lambda_function.null_lambda.function_name }
+      action {
+        name     = "TerraformPlanApproval"
+        category = "Approval"
+        owner    = "AWS"
+        provider = "Manual"
+        version  = "1"
+        configuration = {
+          CustomData = "Check your email to see plan for ${var.client}-${var.environment} and decide whether to approve"
+        }
+      }
     }
   }
 
   stage {
     name = "Deploy"
 
-    action {
-      name     = var.has_infrastructure ? "TerraformApply" : "noneH"
-      category = var.has_infrastructure ? "Build" : "Invoke"
-      owner    = "AWS"
-      provider = var.has_infrastructure ? "CodeBuild" : "Lambda"
-      version  = "1"
+    dynamic "action" {
+      for_each = var.has_infrastructure ? ["1"] : []
+      content {
+        name     = "TerraformApply"
+        category = "Build"
+        owner    = "AWS"
+        provider = "CodeBuild"
+        version  = "1"
 
-      input_artifacts  = var.has_infrastructure ? ["TerraformPlanArtifact"] : []
-      output_artifacts = []
+        input_artifacts  = ["TerraformPlanArtifact"]
+        output_artifacts = []
 
-      configuration = var.has_infrastructure ? {
-        ProjectName          = aws_codebuild_project.apply-step.name
-        PrimarySource        = "TerraformPlanArtifact"
-        EnvironmentVariables = "[{\"name\":\"TF_ACTION\",\"value\":\"apply\",\"type\":\"PLAINTEXT\"}]"
-      } : { FunctionName = aws_lambda_function.null_lambda.function_name }
+        configuration = {
+          ProjectName          = aws_codebuild_project.apply-step.name
+          PrimarySource        = "TerraformPlanArtifact"
+          EnvironmentVariables = "[{\"name\":\"TF_ACTION\",\"value\":\"apply\",\"type\":\"PLAINTEXT\"}]"
+        }
+      }
     }
+    dynamic "action" {
+      for_each = var.should_publish ? ["1"] : []
+      content {
+        name     = "PublishToNPM"
+        category = "Build"
+        owner    = "AWS"
+        provider = "CodeBuild"
+        version  = "1"
 
-    action {
-      name     = var.should_publish ? "PublishToNPM" : "noneI"
-      category = var.should_publish ? "Build" : "Invoke"
-      owner    = "AWS"
-      provider = var.should_publish ? "CodeBuild" : "Lambda"
-      version  = "1"
+        input_artifacts = ["BuildArtifact"]
 
-      input_artifacts = var.should_publish ? ["BuildArtifact"] : []
-
-      configuration = var.should_publish ? {
-        ProjectName   = aws_codebuild_project.publish.name
-        PrimarySource = "BuildArtifact"
-      } : { FunctionName = aws_lambda_function.null_lambda.function_name }
+        configuration = {
+          ProjectName   = aws_codebuild_project.publish.name
+          PrimarySource = "BuildArtifact"
+        }
+      }
     }
 
     dynamic "action" {
@@ -237,18 +259,21 @@ resource "aws_codepipeline" "moar-codepipeline" {
   stage {
     name = "Verify"
 
-    action {
-      name     = var.has_postdeploy_tests ? "PostdeployTest" : "noneJ"
-      category = var.has_postdeploy_tests ? "Test" : "Invoke"
-      owner    = "AWS"
-      provider = var.has_postdeploy_tests ? "CodeBuild" : "Lambda"
-      version  = "1"
+    dynamic "action" {
+      for_each = var.has_postdeploy_tests ? ["1"] : []
+      content {
+        name     = "PostdeployTest"
+        category = "Test"
+        owner    = "AWS"
+        provider = "CodeBuild"
+        version  = "1"
 
-      input_artifacts = var.has_postdeploy_tests ? ["InstalledSourceArtifact"] : []
+        input_artifacts = ["InstalledSourceArtifact"]
 
-      configuration = var.has_postdeploy_tests ? {
-        ProjectName = aws_codebuild_project.postdeploy_tester.name
-      } : { FunctionName = aws_lambda_function.null_lambda.function_name }
+        configuration = {
+          ProjectName = aws_codebuild_project.postdeploy_tester.name
+        }
+      }
     }
   }
 }
