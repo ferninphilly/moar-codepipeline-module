@@ -102,7 +102,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
 
     dynamic "action" {
       for_each = var.has_typescript ? ["1"] : []
-      action {
+      content {
         name             = "Build"
         category         = "Build"
         owner            = "AWS"
@@ -179,7 +179,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
 
   dynamic "stage" {
     for_each = var.has_infrastructure ? ["1"] : []
-    stage {
+    content {
       name = "Gate" # TODO: SNS
 
       action {
@@ -256,12 +256,12 @@ resource "aws_codepipeline" "moar-codepipeline" {
     }
   }
 
-  stage {
-    name = "Verify"
+  dynamic "stage" {
+    for_each = var.has_postdeploy_tests ? ["1"] : []
+    content {
+      name = "Verify"
 
-    dynamic "action" {
-      for_each = var.has_postdeploy_tests ? ["1"] : []
-      content {
+      action {
         name     = "PostdeployTest"
         category = "Test"
         owner    = "AWS"
