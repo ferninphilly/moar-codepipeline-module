@@ -119,7 +119,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
         provider         = "CodeBuild"
         version          = "1"
         run_order        = 1
-        input_artifacts  = "InstalledSourceArtifact"
+        input_artifacts  = ["InstalledSourceArtifact"]
         output_artifacts = ["BuildArtifact", "BuildDistArtifact"]
 
         configuration = {
@@ -216,7 +216,8 @@ resource "aws_codepipeline" "moar-codepipeline" {
     dynamic "action" {
       for_each = length(var.website_bucket_name) > 0 ? ["1"] : []
       content {
-        category = "DeployWebsite"
+        name     = "DeployWebsite"
+        category = "Deploy"
         configuration = {
           "BucketName" = var.website_bucket_name
           "Extract"    = "true"
@@ -224,7 +225,6 @@ resource "aws_codepipeline" "moar-codepipeline" {
         input_artifacts = [
           "BuildDistArtifact",
         ]
-        name             = "Deploy"
         output_artifacts = []
         owner            = "AWS"
         provider         = "S3"

@@ -78,7 +78,7 @@ variable "should_publish" {
 
 variable "website_bucket_name" {
   description = "S3 bucket name for deploying static web content."
-  type        = bool
+  type        = string
   default     = false
 }
 
