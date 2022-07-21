@@ -9,12 +9,13 @@ phases:
     commands:
       - yarn run build
 artifacts:
-  files:
-    - "**/*"
-  exclude-paths:
-    - ./deployment
   secondary-artifacts:
-    dist:
+    BuildArtifact:
+      files:
+        - "**/*"
+      exclude-paths:
+        - ./deployment
+    BuildDistArtifact:
       files:
         - "**/*"
       base-directory: dist
