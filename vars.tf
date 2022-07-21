@@ -76,6 +76,12 @@ variable "should_publish" {
   default     = false
 }
 
+variable "website_bucket_name" {
+  description = "S3 bucket name for deploying static web content."
+  type        = bool
+  default     = false
+}
+
 variable "has_postdeploy_tests" {
   description = "Has tests to run after deployment. If set, there must be a 'test:deployed' action available in the root package. Defaults to false."
   type        = bool
