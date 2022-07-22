@@ -29,4 +29,4 @@ ENV TERRAGRUNT_DISABLE_PROFILE=true
 FROM build as test
 
 RUN apk add --no-cache --update ffmpeg
-RUN npx playwright install
+RUN npx playwright@1.24.0 install
