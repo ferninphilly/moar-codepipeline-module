@@ -29,16 +29,19 @@ aws ecr get-login-password --region $REGION | docker login --username AWS --pass
 
 echo Building
 
-docker build -t moar-codebuild-$ENV-image \
-  --build-arg ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-  --build-arg SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" \
-  --build-arg REGION="$REGION" \
-  --build-arg ACCOUNT_ID="$ACCOUNT_ID" \
-  --build-arg GIT_TOKEN="$GIT_TOKEN" \
-  .
+BUILD_ARGS="--build-arg ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+  --build-arg SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+  --build-arg REGION=$REGION \
+  --build-arg ACCOUNT_ID=$ACCOUNT_ID \
+  --build-arg GIT_TOKEN=$GIT_TOKEN"
+
+docker build --target build -t moar-codebuild-$ENV-image $BUILD_ARGS .
+docker build --target test -t moar-codebuild-test-$ENV-image $BUILD_ARGS .
 
 echo Tagging and Pushing
 
 docker tag moar-codebuild-$ENV-image:latest $REPO_DNS/moar-codebuild-$ENV-image:latest
+docker tag moar-codebuild-test-$ENV-image:latest $REPO_DNS/moar-codebuild-test-$ENV-image:latest
 
 docker push $REPO_DNS/moar-codebuild-$ENV-image:latest
+docker push $REPO_DNS/moar-codebuild-test-$ENV-image:latest

@@ -10,13 +10,14 @@ As the pipeline is parameterised, some stages will not be required for some buil
 yet allow the parameterisation of stages to actually remove them, so instead these stages are set to
 simply invoke a null lambda function.
 
-## ECR image for CodeBuild stages
+## ECR images for CodeBuild stages
 
-The CodeBuild stages use a custom ECR image that is built to work for all the different stages that
-we require here. It is allowed to vary only per environment.
+The CodeBuild stages use a couple of custom ECR images that are built to work for all the different stages that
+we require here. All stages share the same image, except the test stages that add extra tools. Both the images
+are defined in common-infrastructure/Dockerfile.
 
-To provision the ECR repository for the image, go to `ecr-repo/[environment]` (for example `ecr-repo/sandbox`),
+To provision the ECR repositories for the images, go to `ecr-repo/[environment]` (for example `ecr-repo/sandbox`),
 do `terragunt init` and `terragrunt apply`.
 
-To build and push the image, run `ecr-repo/create-image.sh` with the parameter of the environment you
+To build and push the images, run `ecr-repo/create-image.sh` with the parameter of the environment you
 would like to push the image for.

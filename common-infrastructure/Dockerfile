@@ -1,4 +1,4 @@
-FROM alpine/terragrunt
+FROM alpine/terragrunt as build
 
 ARG ACCESS_KEY_ID
 ARG SECRET_ACCESS_KEY
@@ -7,7 +7,7 @@ ARG ACCOUNT_ID
 ARG GIT_TOKEN
 
 RUN apk --no-cache update upgrade
-RUN apk add --no-cache --update nodejs npm yarn bash curl git wget aws-cli ffmpeg jq
+RUN apk add --no-cache --update nodejs npm yarn bash curl git wget aws-cli jq
 RUN yarn global add typescript
 
 RUN git config --global url."https://oauth2:$GIT_TOKEN@github.com".insteadOf https://github.com
@@ -24,3 +24,9 @@ ENV AWS_REGION=$REGION
 ENV AWS_ACCOUNT_ID=$ACCOUNT_ID
 
 ENV TERRAGRUNT_DISABLE_PROFILE=true
+
+# now add the tools we need for testing
+FROM build as test
+
+RUN apk add --no-cache --update ffmpeg
+RUN npx playwright install
