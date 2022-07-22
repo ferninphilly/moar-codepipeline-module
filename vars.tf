@@ -89,3 +89,9 @@ variable "has_postdeploy_tests" {
   type        = bool
   default     = false
 }
+
+variable "automerge_to" {
+  description = "Branch to merge to automatically upon completion of the rest of the pipeline. Defaults to blank == none."
+  type        = string
+  default     = ""
+}

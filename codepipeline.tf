@@ -257,5 +257,36 @@ resource "aws_codepipeline" "moar-codepipeline" {
       }
     }
   }
+
+  dynamic "stage" {
+    for_each = length(var.automerge_to) > 0 ? ["1"] : []
+    content {
+      name = "Merge"
+
+      action {
+        name     = "Merge"
+        category = "Invoke"
+        owner    = "AWS"
+        provider = "Lambda"
+        version  = "1"
+
+        input_artifacts = []
+
+        configuration = {
+          FunctionName = module.merge_branches.function_name
+          UserParameters = jsonencode({
+            repository_owner : var.repository_owner,
+            repository_name : var.repository_name,
+            target_branch : var.automerge_to
+            source_branch : var.gitenv
+            source_sha : "#{SourceVariables.CommitId}"
+            }
+          )
+        }
+      }
+    }
+  }
+
+
 }
 

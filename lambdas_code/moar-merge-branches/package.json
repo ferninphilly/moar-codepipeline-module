@@ -1,0 +1,14 @@
+{
+  "name": "moar-merge-branches",
+  "version": "1.0.0",
+  "description": "Merge a commit hash to a target branch",
+  "main": "moar-merge-branches.js",
+  "author": "Ben Sewell",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@aws-sdk/client-codepipeline": "^3.131.0",
+    "@aws-sdk/client-secrets-manager": "^3.131.0",
+    "@octokit/core": "^4.0.4"
+  }
+}
