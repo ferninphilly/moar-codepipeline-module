@@ -99,25 +99,6 @@ resource "aws_codepipeline" "moar-codepipeline" {
 
       }
     }
-
-    dynamic "action" {
-      for_each = var.has_typescript ? ["1"] : []
-      content {
-        name             = "Build"
-        category         = "Build"
-        owner            = "AWS"
-        provider         = "CodeBuild"
-        version          = "1"
-        run_order        = 1
-        input_artifacts  = ["InstalledSourceArtifact"]
-        output_artifacts = ["BuildArtifact"]
-
-        configuration = {
-          ProjectName = aws_codebuild_project.builder.name
-        }
-      }
-    }
-
     dynamic "action" {
       for_each = (length(var.website_bucket_name) > 0 || var.has_typescript) ? ["1"] : []
       content {
