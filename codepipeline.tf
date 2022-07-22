@@ -1,5 +1,5 @@
 data "aws_codestarconnections_connection" "pipeline_connection" {
-  name = "codepipeline-connection" /* created in the common-infrastructure folder */
+  name = var.repository_owner == "codicesinteractive" ? "codicesinteractive" : "codepipeline-connection" /* second of these created in the common-infrastructure folder */
 }
 
 /* This defines the maximal code pipeline */
