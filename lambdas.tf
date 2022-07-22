@@ -22,7 +22,7 @@ module "slack_notify" {
 }
 
 module "merge_branches" {
-  for_each = length(var.automerge_to) > 0 ? ["1"] : []
+  count = length(var.automerge_to) > 0 ? 1 : 0
 
   source                                = "git::https://github.com/ferninphilly/moar-lambda-module.git"
   stack_name                            = "${var.client}-${var.environment}"
@@ -31,8 +31,9 @@ module "merge_branches" {
   lambda_function_handler               = "moar-merge-branches.handler"
   lambda_function_name                  = "moar-merge-branches-${var.client}"
   lambda_function_source_base_path      = "${path.module}/lambdas_code"
+  lambda_function_env_vars              = {}
   run_yarn_install                      = true
-  lambda_function_existing_execute_role = aws_iam_role.merge_branches_lambda_role.arn
+  lambda_function_existing_execute_role = aws_iam_role.merge_branches_lambda_role[0].arn
   client                                = var.client
   sns_error_topic_arn                   = local.sns_error_topic_arn
   environment                           = var.environment
@@ -89,7 +90,7 @@ resource "aws_iam_role" "slack_notify_lambda_role" {
 }
 
 resource "aws_iam_role" "merge_branches_lambda_role" {
-  for_each = length(var.automerge_to) > 0 ? ["1"] : []
+  count = length(var.automerge_to) > 0 ? 1 : 0
 
   inline_policy {
     name = "merge_branches_lambda_role_policy"
