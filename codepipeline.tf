@@ -148,7 +148,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
         provider         = "CodeBuild"
         version          = "1"
         run_order        = 1
-        input_artifacts  = var.has_typescript ? "BuildArtifact" : "InstalledSourceArtifact"
+        input_artifacts  = [var.has_typescript ? "BuildArtifact" : "InstalledSourceArtifact"]
         output_artifacts = ["TerraformPlanArtifact"]
 
         configuration = {
