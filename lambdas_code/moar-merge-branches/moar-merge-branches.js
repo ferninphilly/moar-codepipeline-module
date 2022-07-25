@@ -5,7 +5,7 @@ const { CodePipelineClient, PutJobSuccessResultCommand, PutJobFailureResultComma
 module.exports.handler = async (event, context, callback) => {
 
     console.log("Event: " + JSON.stringify(event));
-    const params = event["CodePipeline.job"].data.actionConfiguration.configuration.UserParameters;
+    const params = JSON.parse(event["CodePipeline.job"].data.actionConfiguration.configuration.UserParameters);
     console.log("Parameters: " + JSON.stringify(params));
 
     const client = new CodePipelineClient({});
@@ -14,8 +14,6 @@ module.exports.handler = async (event, context, callback) => {
     try {
         const secretValueResponse = await new SecretsManagerClient({}).send(new GetSecretValueCommand({ SecretId: "deployment/config" }));
         const gitToken = JSON.parse(secretValueResponse.SecretString).git_token
-
-        console.log("First three characters of git token: " + gitToken.substring(3));
 
         const octokit = new Octokit({
             auth: gitToken
@@ -34,6 +32,6 @@ module.exports.handler = async (event, context, callback) => {
         await client.send(new PutJobSuccessResultCommand({ jobId: jobId }));
     } catch (err) {
         console.error("Failed: " + err);
-        await client.send(new PutJobFailureResultCommand({ jobId: jobId, failureDetails: {message: err, type: FailureType.JobFailed} }));
+        await client.send(new PutJobFailureResultCommand({ jobId: jobId, failureDetails: {message: `${err}`, type: FailureType.JobFailed} }));
     }
 }

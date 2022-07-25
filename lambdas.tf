@@ -125,7 +125,8 @@ resource "aws_iam_role" "merge_branches_lambda_role" {
           {
             "Effect" : "Allow",
             "Action" : [
-              "codepipeline:PutJobSuccessResult"
+              "codepipeline:PutJobSuccessResult",
+              "codepipeline:PutJobFailureResult"
             ],
             "Resource" : [
               "*"
