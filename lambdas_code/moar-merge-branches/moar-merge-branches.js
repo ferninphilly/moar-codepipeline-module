@@ -30,7 +30,6 @@ module.exports.handler = async (event, context, callback) => {
         })
 
         console.log("Merge request result: " + JSON.stringify(result));
-        */
 
         await client.send(new PutJobSuccessResultCommand({ jobId: jobId }));
     } catch (err) {
