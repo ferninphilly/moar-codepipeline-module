@@ -18,6 +18,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
     action {
       name             = "Source"
       category         = "Source"
+      namespace        = "SourceVariables"
       owner            = "AWS"
       provider         = "CodeStarSourceConnection"
       version          = "1"
@@ -273,7 +274,7 @@ resource "aws_codepipeline" "moar-codepipeline" {
         input_artifacts = []
 
         configuration = {
-          FunctionName = module.merge_branches.function_name
+          FunctionName = module.merge_branches[0].function_name
           UserParameters = jsonencode({
             repository_owner : var.repository_owner,
             repository_name : var.repository_name,

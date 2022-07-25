@@ -121,7 +121,18 @@ resource "aws_iam_role" "merge_branches_lambda_role" {
             "Resource" : [
               "arn:aws:secretsmanager:*:*:secret:deployment/config*"
             ]
-          }
+          },
+          {
+            "Effect" : "Allow",
+            "Action" : [
+              "codepipeline:PutJobSuccessResult"
+            ],
+            "Resource" : [
+              "*"
+            ]
+          },
+
+
         ]
     })
   }

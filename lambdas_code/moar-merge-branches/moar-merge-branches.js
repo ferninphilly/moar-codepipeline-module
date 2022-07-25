@@ -21,7 +21,6 @@ module.exports.handler = async (event, context, callback) => {
             auth: gitToken
         })
 
-        /*
         result = await octokit.request('POST /repos/{owner}/{repo}/merges', {
             owner: params.repository_owner,
             repo: params.repository_name,
