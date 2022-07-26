@@ -4,10 +4,9 @@ const { CodePipelineClient, PutJobSuccessResultCommand, PutJobFailureResultComma
 
 module.exports.handler = async (event, context, callback) => {
 
-    console.log("Event: " + JSON.stringify(event));
     const params = JSON.parse(event["CodePipeline.job"].data.actionConfiguration.configuration.UserParameters);
     console.log("Parameters: " + JSON.stringify(params));
-
+    
     const client = new CodePipelineClient({});
     var jobId = event["CodePipeline.job"].id;    
     
