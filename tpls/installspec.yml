@@ -7,7 +7,7 @@ phases:
     on-failure: ABORT
     commands:
       # get credentials for NPM if they are required - can't do this in the install script for some reason
-      - yarn npmrc || true
+#       - yarn npmrc || true
       # install all package.json files, starting at the shortest path and working to the longest (i.e. doing the root first, if it exists)
       - find -name "package.json" | awk '{ print length, $0 }' | sort -n -s | cut -d" " -f2- | sed -e '/.\/node_modules\//d' -e 's/package.json//' | xargs -iX bash -c "echo Installing to X && yarn install --frozen-lockfile --cache-folder $PWD/cache --cwd X"
 artifacts:
