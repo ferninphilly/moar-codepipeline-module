@@ -11,4 +11,5 @@ phases:
       - terragrunt hclfmt
       - terragrunt validate-inputs
       - terragrunt validate -json
+      - yarn && yarn prettier --check .
       - exit $?
