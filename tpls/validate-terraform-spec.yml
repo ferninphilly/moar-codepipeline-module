@@ -7,7 +7,7 @@ phases:
       - cd ${TF_DIR}
   build:
     commands:
-      - yes | terragrunt init
+      - yes | terragrunt init -upgrade
       - terragrunt hclfmt
       - terragrunt validate-inputs
       - terragrunt validate -json
