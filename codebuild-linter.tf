@@ -21,6 +21,7 @@ resource "aws_codebuild_project" "linter" {
   source {
     type = "CODEPIPELINE"
     buildspec = templatefile("${path.module}/tpls/lintspec.yml", {
+      TF_DIR       = local.tf_dir
       GIT_TOKEN    = local.git_token
       CURRENT_DATE = formatdate("YYYYMMDDhhmm", timestamp())
       CLIENT       = var.client
