@@ -21,6 +21,7 @@ resource "aws_codebuild_project" "typesvalidator" {
   source {
     type = "CODEPIPELINE"
     buildspec = templatefile("${path.module}/tpls/types-validate-spec.yml", {
+      TF_DIR       = local.tf_dir
       CURRENT_DATE = formatdate("YYYYMMDDhhmm", timestamp())
       CLIENT       = var.client
       GIT_TOKEN    = local.git_token
