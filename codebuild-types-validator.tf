@@ -23,7 +23,6 @@ resource "aws_codebuild_project" "typesvalidator" {
     buildspec = templatefile("${path.module}/tpls/types-validate-spec.yml", {
       CURRENT_DATE = formatdate("YYYYMMDDhhmm", timestamp())
       CLIENT       = var.client
-      GIT_TOKEN    = var.git_token
     })
     report_build_status = true
   }
