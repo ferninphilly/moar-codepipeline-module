@@ -5,6 +5,9 @@ phases:
   pre_build:
     commands:
       - cd ${TF_DIR}
+      - CREDS=$(aws secretsmanager get-secret-value --secret-id codebuild/accesskeys | jq -r .SecretString)
+      - GIT_TOKEN=$(jq -r .git_token <<< $CREDS)
+      - git config --global url."https://${GIT_TOKEN}@github.com".insteadOf "https://github.com"
   build:
     commands:
       - terragrunt apply --terragrunt-log-level debug tf_plan.tfplan >> applied_plan.txt

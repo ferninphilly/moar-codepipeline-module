@@ -58,7 +58,8 @@ resource "aws_ecr_repository_policy" "allow_codebuild" {
             "ecr:DeleteRepository",
             "ecr:BatchDeleteImage",
             "ecr:SetRepositoryPolicy",
-            "ecr:DeleteRepositoryPolicy"
+            "ecr:DeleteRepositoryPolicy",
+            "secretsmanager:GetSecretValue"
           ]
         }
       ]

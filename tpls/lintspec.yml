@@ -2,6 +2,12 @@ version: 0.2
 
 # aws codebuild start-build --project-name moar
 phases:
+  pre_build:
+    commands:
+      - cd ${TF_DIR}
+      - CREDS=$(aws secretsmanager get-secret-value --secret-id codebuild/accesskeys | jq -r .SecretString)
+      - GIT_TOKEN=$(jq -r .git_token <<< $CREDS)
+      - git config --global url."https://${GIT_TOKEN}@github.com".insteadOf "https://github.com"
   install:
     commands:
       - yarn install --frozen-lockfile --offline --check-files --cache-folder ./cache
