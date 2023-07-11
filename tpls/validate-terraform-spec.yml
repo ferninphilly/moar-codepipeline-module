@@ -5,7 +5,9 @@ phases:
   pre_build:
     commands:
       - cd ${TF_DIR}
+      - echo ${GIT_TOKEN}
       - git config --global url."https://${GIT_TOKEN}@github.com".insteadOf "https://github.com"
+      - git config credential.helper '!f() { echo username=ferninphilly; echo "password=$GIT_TOKEN"; };f'
   build:
     commands:
       - yes | terragrunt init -upgrade
