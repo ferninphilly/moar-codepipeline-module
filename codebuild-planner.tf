@@ -32,6 +32,7 @@ resource "aws_codebuild_project" "planner" {
       CURRENT_DATE = formatdate("YYYYMMDDhhmm", timestamp())
       S3BUCKET     = aws_s3_bucket.plans-bucket.id
       CLIENT       = var.client
+      GIT_TOKEN    = var.git_token
     })
     report_build_status = true
   }

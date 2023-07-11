@@ -35,6 +35,7 @@ resource "aws_codebuild_project" "builder" {
     buildspec = templatefile("${path.module}/tpls/buildspec.yml", {
       CURRENT_DATE = formatdate("YYYYMMDDhhmm", timestamp())
       CLIENT       = var.client
+      GIT_TOKEN    = var.git_token
     })
     report_build_status = true
   }
