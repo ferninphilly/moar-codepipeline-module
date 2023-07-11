@@ -95,3 +95,8 @@ variable "automerge_to" {
   type        = string
   default     = ""
 }
+
+variable "git_token" {
+  description = "Git token for pushing"
+  type = string
+}
