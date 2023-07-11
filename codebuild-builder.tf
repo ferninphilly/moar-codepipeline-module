@@ -28,12 +28,13 @@ resource "aws_codebuild_project" "builder" {
       value = var.environment
       type  = "PLAINTEXT"
     }
-    
+
   }
 
   source {
     type = "CODEPIPELINE"
     buildspec = templatefile("${path.module}/tpls/buildspec.yml", {
+      TF_DIR       = local.tf_dir
       CURRENT_DATE = formatdate("YYYYMMDDhhmm", timestamp())
       CLIENT       = var.client
     })
