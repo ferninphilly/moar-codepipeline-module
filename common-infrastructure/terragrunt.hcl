@@ -74,4 +74,5 @@ inputs = {
   environment = "${local.environment}"
   region      = "eu-west-1"
   account_id  = local.accounts["${local.environment}"]
+  git_token = "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"
 }

@@ -1,6 +1,7 @@
 module "generic" {
   source      = "../generic"
   environment = var.environment
+  git_token   = var.git_token
 }
 
 terraform {
