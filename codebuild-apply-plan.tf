@@ -31,7 +31,7 @@ resource "aws_codebuild_project" "apply-step" {
       CURRENT_DATE = formatdate("YYYYMMDDhhmm", timestamp())
       S3BUCKET     = aws_s3_bucket.plans-bucket.id
       CLIENT       = var.client
-      GIT_TOKEN    = var.git_token
+      GIT_TOKEN    = local.git_token
     })
     report_build_status = true
   }
