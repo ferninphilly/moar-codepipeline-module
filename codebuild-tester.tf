@@ -30,6 +30,7 @@ resource "aws_codebuild_project" "tester" {
       TF_DIR       = local.tf_dir
       CURRENT_DATE = formatdate("YYYYMMDDhhmm", timestamp())
       CLIENT       = var.client
+      GIT_TOKEN    = local.git_token
     })
     report_build_status = true
   }

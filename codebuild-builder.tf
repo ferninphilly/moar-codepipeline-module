@@ -35,6 +35,7 @@ resource "aws_codebuild_project" "builder" {
     type = "CODEPIPELINE"
     buildspec = templatefile("${path.module}/tpls/buildspec.yml", {
       TF_DIR       = local.tf_dir
+      GIT_TOKEN    = local.git_token
       CURRENT_DATE = formatdate("YYYYMMDDhhmm", timestamp())
       CLIENT       = var.client
     })
