@@ -33,10 +33,10 @@ BUILD_ARGS="--build-arg ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
   --build-arg SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
   --build-arg REGION=$REGION \
   --build-arg ACCOUNT_ID=$ACCOUNT_ID \
-  --build-arg GIT_TOKEN=$GIT_TOKEN"
+  --build-arg GIT_TOKEN=$GIT_TOKEN" 
 
-docker build --target build -t moar-codebuild-$ENV-image $BUILD_ARGS .
-docker build --target test -t moar-codebuild-test-$ENV-image $BUILD_ARGS .
+docker build --target build -t moar-codebuild-$ENV-image $BUILD_ARGS --no-cache .
+docker build --target test -t moar-codebuild-test-$ENV-image $BUILD_ARGS --no-cache .
 
 echo Tagging and Pushing
 

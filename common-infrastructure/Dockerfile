@@ -10,8 +10,7 @@ RUN apk --no-cache update upgrade
 RUN apk add --no-cache --update nodejs npm yarn bash curl git wget aws-cli jq
 RUN yarn global add typescript
 
-RUN git config --global url."https://oauth2:$GIT_TOKEN@github.com".insteadOf https://github.com
-
+RUN git config --global url."https://ferninphilly:${GIT_TOKEN}@github.com/".insteadOf "https://github.com/"
 WORKDIR /usr/src/moar-meta-infrastructure
 
 ENV AWS_ACCESS_KEY_ID=$ACCESS_KEY_ID
