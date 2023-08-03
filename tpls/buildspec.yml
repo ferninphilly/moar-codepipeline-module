@@ -8,8 +8,11 @@ phases:
   install:
     commands:
       - yarn install --frozen-lockfile --offline --check-files --cache-folder ./cache
-  build:
-    commands:
+      - |
+        if [ ${CLIENT} = 'data-management' ] ; then
+          rm -rf node_modules/sharp;
+          SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install --arch=x64 --platform=linux --libc=glibc sharp;
+        fi;
       - yarn run build
 artifacts:
   secondary-artifacts:
