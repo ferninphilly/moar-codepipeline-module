@@ -12,7 +12,7 @@ phases:
       - find -name "package.json" | awk '{ print length, $0 }' | sort -n -s | cut -d" " -f2- | sed -e '/.\/node_modules\//d' -e 's/package.json//' | xargs -iX bash -c "echo Installing to X && yarn install --frozen-lockfile --cache-folder $PWD/cache --cwd X"
       - |
         if [ "${CLIENT}" == "studio" ] ; then
-          cd cd infrastructure/deployment_module/lambdas_code/appsync/moar-manage-images
+          cd infrastructure/deployment_module/lambdas_code/appsync/moar-manage-images
           rm -rf node_modules/sharp;
           SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install --arch=x64 --platform=linux --libc=glibc sharp;
         fi
