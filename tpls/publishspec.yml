@@ -7,7 +7,7 @@ env:
 phases:
   install:
     commands:
-      - HUSKY=0 yarn install --frozen-lockfile --offline --check-files --cache-folder ./cache
+      - HUSKY_SKIP_INSTALL=1 yarn install --frozen-lockfile --offline --check-files --cache-folder ./cache
   pre_build:
     commands:
       - echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ./.npmrc

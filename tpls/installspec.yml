@@ -7,7 +7,7 @@ phases:
     on-failure: ABORT
     commands:
       - |
-        if [ "${CLIENT}" = "studio" ] ; then
+        if [ "${CLIENT}" == "studio" ] ; then
           echo "Found sharp stuff for this one"
           rm -rf node_modules/sharp;
           SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install --arch=x64 --platform=linux --libc=glibc sharp;
