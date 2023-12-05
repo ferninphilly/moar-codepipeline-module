@@ -12,7 +12,7 @@ phases:
         if [ "${CLIENT}" == "studio" ] ; then
           cd infrastructure/deployment_module/lambdas_code/appsync/moar-manage-images
           rm -rf node_modules/sharp;
-          SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install --arch=x64 --platform=linux --libc=glibc sharp;
+          SHARP_IGNORE_GLOBAL_LIBVIPS=1 yarn add --arch=x64 --platform=linux --libc=glibc sharp@0.32.3;
         fi
 artifacts:
   secondary-artifacts:
